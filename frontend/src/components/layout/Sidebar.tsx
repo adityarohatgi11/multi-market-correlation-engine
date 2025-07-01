@@ -252,7 +252,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
             })}
           </nav>
           
-          {/* Footer */}
+          {/* Mobile Footer */}
           <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
             <div className="flex items-center">
               <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
@@ -262,10 +262,13 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
         </div>
       </motion.div>
 
-      {/* Overlay */}
+      {/* Mobile overlay */}
       {open && (
-        <div
-          className="lg:hidden fixed inset-0 z-40 bg-gray-900 bg-opacity-50"
+        <motion.div
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           onClick={onClose}
         />
       )}
