@@ -33,13 +33,6 @@ interface NavigationItem {
   icon: React.ComponentType<{ className?: string }>
   iconSolid: React.ComponentType<{ className?: string }>
   badge?: number
-  {
-    name: "Workflow",
-    href: "/workflow",
-    icon: CpuChipIcon,
-    iconSolid: CpuChipIcon,
-    description: "Process orchestration and monitoring",
-  },
   description: string
 }
 

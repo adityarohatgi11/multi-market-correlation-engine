@@ -46,7 +46,7 @@ class DataCollectionAgent(BaseAgent):
         """
         default_config = {
             'collection_interval': 300,  # 5 minutes
-            'symbols': ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA'],
+            'symbols': ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA'],  # Default symbols, will be updated later
             'data_sources': ['yahoo_finance'],
             'quality_threshold': 0.8,
             'retry_attempts': 3,
@@ -59,6 +59,13 @@ class DataCollectionAgent(BaseAgent):
             default_config.update(config)
         
         super().__init__(agent_id, name, default_config)
+        
+        # Update symbols with comprehensive list
+        try:
+            comprehensive_symbols = self._get_comprehensive_symbol_list()
+            self.config['symbols'] = comprehensive_symbols
+        except Exception as e:
+            self.logger.warning(f'Failed to load comprehensive symbol list, using defaults: {e}')
         
         # Initialize components
         self.db_manager = DatabaseManager()
@@ -490,6 +497,43 @@ class DataCollectionAgent(BaseAgent):
         )
         
         return task.id
+    
+    def _get_comprehensive_symbol_list(self) -> List[str]:
+        """Get comprehensive symbol list from data_sources.yaml configuration."""
+        try:
+            from src.config.config_manager import get_config
+            config = get_config()
+            yahoo_config = config.get_data_source_config("yahoo_finance")
+            
+            # Collect all symbols from different categories
+            all_symbols = []
+            
+            # Global indices
+            equities = yahoo_config.get('equities', {})
+            all_symbols.extend(equities.get('global_indices', []))
+            all_symbols.extend(equities.get('sector_etfs', []))
+            
+            # Other asset classes
+            all_symbols.extend(yahoo_config.get('commodities', []))
+            all_symbols.extend(yahoo_config.get('bonds', []))
+            all_symbols.extend(yahoo_config.get('currencies', []))
+            
+            # Remove duplicates while preserving order
+            unique_symbols = []
+            seen = set()
+            for symbol in all_symbols:
+                if symbol not in seen:
+                    unique_symbols.append(symbol)
+                    seen.add(symbol)
+            
+            self.logger.info(f"Loaded {len(unique_symbols)} symbols from configuration")
+            return unique_symbols
+            
+        except Exception as e:
+            self.logger.warning(f"Failed to load comprehensive symbol list: {e}")
+            # Fallback to expanded default set
+            return ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'JPM', 'BAC', 'XOM', 
+                   'SPY', 'QQQ', 'IWM', 'VTI', 'GLD', 'TLT', '^GSPC', '^IXIC']
 
 
 if __name__ == "__main__":
