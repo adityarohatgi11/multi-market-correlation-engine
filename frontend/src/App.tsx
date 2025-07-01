@@ -1,31 +1,19 @@
 import { FC } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
-import Layout from '@/components/layout/Layout'
-import Dashboard from '@/pages/Dashboard'
-import WorkflowDashboard from '@/pages/WorkflowDashboard'
-import LLMAssistant from '@/pages/LLMAssistant'
-import VectorSearch from '@/pages/VectorSearch'
-import MarketAnalysis from '@/pages/MarketAnalysis'
-import Portfolio from '@/pages/Portfolio'
-import Reports from '@/pages/Reports'
-import Settings from '@/pages/Settings'
 
 const App: FC = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/workflow" element={<WorkflowDashboard />} />
-          <Route path="/market-analysis" element={<MarketAnalysis />} />
-          <Route path="/llm-assistant" element={<LLMAssistant />} />
-          <Route path="/vector-search" element={<VectorSearch />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
-      </Layout>
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+      <h1 style={{ color: 'blue' }}>Multi-Market Correlation Engine</h1>
+      <p style={{ color: 'green' }}>✅ React is working!</p>
+      <p style={{ color: 'green' }}>✅ Frontend is loading!</p>
+      <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f0f0f0' }}>
+        <h2>Status Check</h2>
+        <ul>
+          <li>React: Working ✅</li>
+          <li>Vite: Working ✅</li>
+          <li>TypeScript: Working ✅</li>
+        </ul>
+      </div>
     </div>
   )
 }
