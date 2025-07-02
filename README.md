@@ -2,11 +2,11 @@
 
 An autonomous AI system that identifies, visualizes, and forecasts correlation structures across multiple global markets and asset classes.
 
-## 🎯 Objective
+## Objective
 
 Create an agentic AI that autonomously analyzes how volatility and price movements in one market influence or predict movements in other markets, providing actionable insights for investment strategies.
 
-## 🚀 Features
+## Features
 
 ### Core Capabilities
 - **Multi-Asset Data Collection**: Automated daily collection from stocks, bonds, commodities, and crypto markets
@@ -22,21 +22,21 @@ Create an agentic AI that autonomously analyzes how volatility and price movemen
 - **Fixed Income**: Government and corporate bonds
 - **Macroeconomic Indicators**: GDP, inflation, interest rates
 
-## 🏗️ Architecture
+## 🏗 Architecture
 
 ```
-├── data/                   # Data storage and management
-├── src/                   # Core application code
-│   ├── collectors/        # Data collection modules
-│   ├── models/           # Correlation and forecasting models
-│   ├── agents/           # Autonomous AI agents
-│   └── visualization/    # Dashboard and plotting utilities
-├── config/               # Configuration files
-├── tests/               # Unit and integration tests
-└── notebooks/           # Jupyter notebooks for analysis
+├── data/ # Data storage and management
+├── src/ # Core application code
+│ ├── collectors/ # Data collection modules
+│ ├── models/ # Correlation and forecasting models
+│ ├── agents/ # Autonomous AI agents
+│ └── visualization/ # Dashboard and plotting utilities
+├── config/ # Configuration files
+├── tests/ # Unit and integration tests
+└── notebooks/ # Jupyter notebooks for analysis
 ```
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Data Collection**: yfinance, FRED API, CoinGecko API
 - **Modeling**: statsmodels, arch (GARCH), scikit-learn
@@ -44,7 +44,7 @@ Create an agentic AI that autonomously analyzes how volatility and price movemen
 - **Visualization**: Streamlit, Plotly, Dash
 - **Data Processing**: pandas, NumPy, scipy
 
-## 📦 Installation
+## Installation
 
 ```bash
 # Clone the repository
@@ -53,13 +53,13 @@ cd multi_market_correlation_engine
 
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Start the data collection
@@ -72,39 +72,39 @@ python src/models/correlation_engine.py
 streamlit run src/visualization/dashboard.py
 ```
 
-## 📊 Project Phases
+## Project Phases
 
-### Phase 1: Data Foundation ✅
+### Phase 1: Data Foundation
 - Automated data collection from multiple sources
 - Data cleaning and unified schema
 - Historical data validation
 
-### Phase 2: Exploratory Analysis 🔄
+### Phase 2: Exploratory Analysis
 - Historical correlation identification
 - Stability and cointegration testing
 - Volatility clustering analysis
 
-### Phase 3: Correlation Modeling 📋
+### Phase 3: Correlation Modeling
 - DCC-GARCH implementation
 - VAR model development
 - Out-of-sample validation
 
-### Phase 4: Predictive Modeling 📋
+### Phase 4: Predictive Modeling
 - LSTM/Transformer forecasting
 - Scenario analysis capabilities
 - Model ensemble methods
 
-### Phase 5: Agentic Automation 📋
+### Phase 5: Agentic Automation
 - Autonomous training pipeline
 - Real-time alert system
 - Automated reporting
 
-### Phase 6: Interactive Dashboard 📋
+### Phase 6: Interactive Dashboard
 - Streamlit-based interface
 - Real-time visualizations
 - Export and sharing capabilities
 
-## 🔧 Configuration
+## Configuration
 
 The system uses YAML configuration files for flexible parameter management:
 
@@ -112,7 +112,7 @@ The system uses YAML configuration files for flexible parameter management:
 - `config/model_params.yaml`: Model hyperparameters and training settings
 - `config/alert_settings.yaml`: Notification and alert configurations
 
-## 📈 Key Models
+## Key Models
 
 ### Correlation Models
 - **DCC-GARCH**: Dynamic Conditional Correlation with GARCH volatility
@@ -124,14 +124,14 @@ The system uses YAML configuration files for flexible parameter management:
 - **Transformer Models**: For attention-based correlation prediction
 - **Ensemble Methods**: Combining multiple model predictions
 
-## 🎯 Use Cases
+## Use Cases
 
 - **Portfolio Optimization**: Identify diversification opportunities
 - **Risk Management**: Predict correlation breakdowns during market stress
 - **Trading Strategies**: Exploit temporary correlation anomalies
 - **Market Research**: Understand global market interconnections
 
-## 📊 Example Outputs
+## Example Outputs
 
 - Dynamic correlation heatmaps
 - Network graphs of market relationships
@@ -147,7 +147,7 @@ The system uses YAML configuration files for flexible parameter management:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -161,4 +161,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Status**: 🚧 Under Active Development
 **Version**: 0.1.0-alpha
-**Last Updated**: January 2025 
+**Last Updated**: January 2025

@@ -2,7 +2,7 @@
 
 An impressive and functional TypeScript React frontend for the Multi-Market Correlation Engine with FAISS Vector Database and Llama LLM integration.
 
-## 🚀 Features
+## Features
 
 ### ✨ Beautiful & Modern UI
 - **Material Design Inspired**: Clean, modern interface with Tailwind CSS
@@ -16,13 +16,13 @@ An impressive and functional TypeScript React frontend for the Multi-Market Corr
 - **Market Analysis**: Advanced correlation visualization and insights
 - **Smart Recommendations**: AI-generated portfolio optimization
 
-### 📊 Advanced Analytics
+### Advanced Analytics
 - **Real-time Charts**: Interactive charts with Recharts
 - **Correlation Matrices**: Beautiful heatmaps and analysis
 - **Performance Tracking**: Portfolio and market performance
 - **Custom Dashboards**: Configurable analytics panels
 
-### 🛠 Technical Excellence
+### Technical Excellence
 - **TypeScript**: Fully typed codebase for reliability
 - **React 19**: Latest React with modern hooks and patterns
 - **Vite**: Lightning-fast development and build
@@ -34,34 +34,34 @@ An impressive and functional TypeScript React frontend for the Multi-Market Corr
 ```
 frontend/
 ├── src/
-│   ├── components/          # Reusable UI components
-│   │   ├── ui/             # Basic UI components (Card, Button, etc.)
-│   │   └── layout/         # Layout components (Sidebar, Header)
-│   ├── pages/              # Main application pages
-│   │   ├── Dashboard.tsx   # Overview dashboard
-│   │   ├── LLMAssistant.tsx# AI chat interface
-│   │   ├── VectorSearch.tsx# FAISS pattern search
-│   │   ├── MarketAnalysis.tsx # Charts and correlations
-│   │   └── Portfolio.tsx   # Portfolio management
-│   ├── api/                # API client and services
-│   │   └── client.ts       # Axios-based API client
-│   ├── types/              # TypeScript type definitions
-│   │   └── index.ts        # All application types
-│   ├── hooks/              # Custom React hooks
-│   ├── utils/              # Utility functions
-│   └── assets/             # Static assets
-├── public/                 # Public assets
-├── index.html             # HTML entry point
-├── vite.config.ts         # Vite configuration
-├── tailwind.config.js     # Tailwind CSS configuration
-├── tsconfig.json          # TypeScript configuration
-└── package.json           # Dependencies and scripts
+│ ├── components/ # Reusable UI components
+│ │ ├── ui/ # Basic UI components (Card, Button, etc.)
+│ │ └── layout/ # Layout components (Sidebar, Header)
+│ ├── pages/ # Main application pages
+│ │ ├── Dashboard.tsx # Overview dashboard
+│ │ ├── LLMAssistant.tsx# AI chat interface
+│ │ ├── VectorSearch.tsx# FAISS pattern search
+│ │ ├── MarketAnalysis.tsx # Charts and correlations
+│ │ └── Portfolio.tsx # Portfolio management
+│ ├── api/ # API client and services
+│ │ └── client.ts # Axios-based API client
+│ ├── types/ # TypeScript type definitions
+│ │ └── index.ts # All application types
+│ ├── hooks/ # Custom React hooks
+│ ├── utils/ # Utility functions
+│ └── assets/ # Static assets
+├── public/ # Public assets
+├── index.html # HTML entry point
+├── vite.config.ts # Vite configuration
+├── tailwind.config.js # Tailwind CSS configuration
+├── tsconfig.json # TypeScript configuration
+└── package.json # Dependencies and scripts
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 - Multi-Market Correlation Engine API running on port 8000
 
@@ -88,36 +88,36 @@ npm run preview
 
 ```bash
 # Development
-npm run dev              # Start dev server (http://localhost:3000)
-npm run build           # Build for production
-npm run preview         # Preview production build
-npm run lint            # Run ESLint
-npm run type-check      # TypeScript type checking
+npm run dev # Start dev server (http://localhost:3000)
+npm run build # Build for production
+npm run preview # Preview production build
+npm run lint # Run ESLint
+npm run type-check # TypeScript type checking
 ```
 
-## 📱 Pages & Features
+## Pages & Features
 
-### 🏠 Dashboard
+### Dashboard
 - **Real-time Metrics**: Portfolio value, correlations, vector patterns
 - **Interactive Charts**: Market performance and trend analysis
 - **Activity Feed**: Latest system events and updates
 - **Quick Actions**: Direct access to key features
 
-### 💬 LLM Assistant
+### LLM Assistant
 - **Chat Interface**: Natural language queries with AI responses
 - **Suggested Questions**: Pre-built financial analysis prompts
 - **Markdown Support**: Rich text formatting in responses
 - **Conversation History**: Persistent chat sessions
 - **Real-time Status**: LLM model availability indicators
 
-### 🔍 Vector Search
+### Vector Search
 - **Semantic Search**: FAISS-powered pattern matching
 - **Pattern Filters**: Filter by type, symbol, or metadata
 - **Similarity Scoring**: Visual similarity indicators
 - **Pattern Analytics**: Database statistics and distribution
 - **Advanced Results**: Rich metadata and visualization
 
-### 📊 Market Analysis
+### Market Analysis
 - **Symbol Selection**: Multi-asset analysis interface
 - **Time Range Controls**: Flexible time period selection
 - **Interactive Charts**: Zoomable, responsive price charts
@@ -130,13 +130,13 @@ npm run type-check      # TypeScript type checking
 - Rebalancing recommendations
 - Performance tracking
 
-### 📈 Reports (Coming Soon)
+### Reports (Coming Soon)
 - Custom report generation
 - Export capabilities
 - Scheduled reports
 - Analytics dashboards
 
-## 🎨 UI Components
+## UI Components
 
 ### Layout Components
 - **Sidebar**: Responsive navigation with icons and descriptions
@@ -161,31 +161,31 @@ import apiClient from '@/api/client'
 const health = await apiClient.healthCheck()
 
 // LLM chat
-const response = await apiClient.sendChatMessage({ 
-  message: "What are the current market correlations?" 
+const response = await apiClient.sendChatMessage({
+message: "What are the current market correlations?"
 })
 
 // Vector search
 const patterns = await apiClient.searchVectorPatterns({
-  query: "high volatility tech stocks",
-  k: 10
+query: "high volatility tech stocks",
+k: 10
 })
 
 // Market data
 const data = await apiClient.getMarketData(
-  ['AAPL', 'MSFT'], 
-  '1Y'
+['AAPL', 'MSFT'],
+'1Y'
 )
 ```
 
-## 🎯 State Management
+## State Management
 
 - **React Query**: Server state management and caching
 - **React Hooks**: Local state management
 - **Context API**: Global application state
 - **TypeScript**: Type-safe state operations
 
-## 🎨 Styling & Design
+## Styling & Design
 
 ### Tailwind CSS
 - **Custom Theme**: Financial application color palette
@@ -199,7 +199,7 @@ const data = await apiClient.getMarketData(
 - **Spacing**: Consistent margin and padding scale
 - **Shadows**: Layered elevation system
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 ```env
@@ -212,26 +212,26 @@ The development server proxies API requests to the backend:
 ```typescript
 // vite.config.ts
 export default defineConfig({
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:8000',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
-  },
+server: {
+proxy: {
+'/api': {
+target: 'http://127.0.0.1:8000',
+changeOrigin: true,
+rewrite: (path) => path.replace(/^\/api/, ''),
+},
+},
+},
 })
 ```
 
-## 📱 Mobile Support
+## Mobile Support
 
 - **Responsive Sidebar**: Collapsible mobile navigation
 - **Touch-Friendly**: Optimized for mobile interactions
 - **Performance**: Optimized for mobile performance
 - **PWA Ready**: Progressive Web App capabilities
 
-## 🚀 Performance
+## Performance
 
 - **Code Splitting**: Route-based code splitting
 - **Lazy Loading**: Component-level lazy loading
@@ -243,13 +243,13 @@ export default defineConfig({
 ### File Structure
 ```
 src/
-├── components/ui/       # Basic UI components
-├── components/layout/   # Layout components  
-├── pages/              # Route components
-├── api/                # API client
-├── types/              # TypeScript types
-├── hooks/              # Custom hooks
-└── utils/              # Utilities
+├── components/ui/ # Basic UI components
+├── components/layout/ # Layout components
+├── pages/ # Route components
+├── api/ # API client
+├── types/ # TypeScript types
+├── hooks/ # Custom hooks
+└── utils/ # Utilities
 ```
 
 ### Code Style
@@ -258,7 +258,7 @@ src/
 - **Prettier**: Code formatting
 - **Imports**: Absolute imports with `@/` prefix
 
-## 🌟 Features in Detail
+## Features in Detail
 
 ### Real-time Updates
 - WebSocket integration for live data
@@ -277,7 +277,7 @@ src/
 - Screen reader support
 - Focus management
 
-## 🚀 Deployment
+## Deployment
 
 ### Production Build
 ```bash
@@ -304,14 +304,14 @@ npm run build
 - Vector database connections
 - Notification services
 
-## 📚 Documentation
+## Documentation
 
 - **Component Docs**: Storybook integration ready
 - **API Docs**: OpenAPI/Swagger integration
 - **Type Docs**: Generated TypeScript documentation
 - **User Guide**: In-app help and tutorials
 
-## 🎉 Getting Started
+## Getting Started
 
 1. **Start the Backend**: Ensure the API server is running on port 8000
 2. **Install Dependencies**: `npm install`
@@ -327,12 +327,12 @@ npm run build
 4. Add tests if applicable
 5. Submit a pull request
 
-## 📄 License
+## License
 
 MIT License - see LICENSE file for details
 
 ---
 
-**Built with ❤️ for the Multi-Market Correlation Engine**
+**Built with for the Multi-Market Correlation Engine**
 
-*A beautiful, functional TypeScript frontend that brings advanced financial analysis to life.* 
+*A beautiful, functional TypeScript frontend that brings advanced financial analysis to life.*

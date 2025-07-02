@@ -1,95 +1,95 @@
-# 🚀 Multi-Market Correlation Engine - Complete System Guide
+# Multi-Market Correlation Engine - Complete System Guide
 
-## 🌟 System Overview
+## System Overview
 
 The Multi-Market Correlation Engine is now a **complete, production-ready** financial analytics platform with seamless workflow orchestration, advanced AI/ML capabilities, and a modern web interface.
 
 ### ✨ Key Features
 
-- **🔄 Comprehensive Workflow Orchestration** - Automated end-to-end analysis pipelines
-- **�� Advanced AI/ML Integration** - TensorFlow, scikit-learn, FAISS vector database
-- **📊 Real-time Market Data Processing** - Yahoo Finance, FRED API, multi-source aggregation
+- ** Comprehensive Workflow Orchestration** - Automated end-to-end analysis pipelines
+- ** Advanced AI/ML Integration** - TensorFlow, scikit-learn, FAISS vector database
+- ** Real-time Market Data Processing** - Yahoo Finance, FRED API, multi-source aggregation
 - **🧠 LLM-powered Insights** - Natural language market analysis and explanations
-- **🌐 Modern Web Interface** - React TypeScript frontend with real-time updates
-- **⚙️ Agent-based Architecture** - Autonomous data collection, analysis, and reporting
-- **📈 Advanced Analytics** - Correlation analysis, GARCH modeling, VAR, regime detection
-- **🔍 Vector Pattern Matching** - Semantic search through market patterns and correlations
+- ** Modern Web Interface** - React TypeScript frontend with real-time updates
+- ** Agent-based Architecture** - Autonomous data collection, analysis, and reporting
+- ** Advanced Analytics** - Correlation analysis, GARCH modeling, VAR, regime detection
+- ** Vector Pattern Matching** - Semantic search through market patterns and correlations
 
-## 🏗️ Complete Architecture
+## 🏗 Complete Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Frontend Layer (React/TypeScript)            │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │  Dashboard  │  │  Workflow   │  │  LLM Chat   │             │
-│  │             │  │  Monitor    │  │             │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
+│ Frontend Layer (React/TypeScript) │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ Dashboard │ │ Workflow │ │ LLM Chat │ │
+│ │ │ │ Monitor │ │ │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
-                              │ HTTP/WebSocket
+│ HTTP/WebSocket
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Enhanced API Layer (FastAPI)                 │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │  Workflow   │  │  Data API   │  │  LLM API    │             │
-│  │  Endpoints  │  │             │  │             │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
+│ Enhanced API Layer (FastAPI) │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ Workflow │ │ Data API │ │ LLM API │ │
+│ │ Endpoints │ │ │ │ │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
-                              │
+│
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Workflow Orchestration Layer                 │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │ Workflow Manager - Comprehensive Process Orchestration     ││
-│  │                                                             ││
-│  │ 1. Data Collection → 2. Validation → 3. Correlation       ││
-│  │ 4. ML Analysis → 5. Regime Detection → 6. Network         ││
-│  │ 7. LLM Processing → 8. Vector Storage → 9. Recommendations ││
-│  │ 10. Reporting → 11. Frontend Updates                       ││
-│  └─────────────────────────────────────────────────────────────┘│
+│ Workflow Orchestration Layer │
+│ │
+│ ┌─────────────────────────────────────────────────────────────┐│
+│ │ Workflow Manager - Comprehensive Process Orchestration ││
+│ │ ││
+│ │ 1. Data Collection → 2. Validation → 3. Correlation ││
+│ │ 4. ML Analysis → 5. Regime Detection → 6. Network ││
+│ │ 7. LLM Processing → 8. Vector Storage → 9. Recommendations ││
+│ │ 10. Reporting → 11. Frontend Updates ││
+│ └─────────────────────────────────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────────┘
-                              │
+│
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Agent-based Processing Layer                 │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │    Data     │  │  Analysis   │  │     LLM     │             │
-│  │ Collection  │  │   Agent     │  │   Agent     │             │
-│  │   Agent     │  │             │  │             │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
-│  ┌─────────────┐  ┌─────────────┐                               │
-│  │Recommendation│  │  Reporting  │                               │
-│  │   Agent     │  │   Agent     │                               │
-│  └─────────────┘  └─────────────┘                               │
+│ Agent-based Processing Layer │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ Data │ │ Analysis │ │ LLM │ │
+│ │ Collection │ │ Agent │ │ Agent │ │
+│ │ Agent │ │ │ │ │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ │
+│ ┌─────────────┐ ┌─────────────┐ │
+│ │Recommendation│ │ Reporting │ │
+│ │ Agent │ │ Agent │ │
+│ └─────────────┘ └─────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
-                              │
+│
 ┌─────────────────────────────────────────────────────────────────┐
-│                    AI/ML Processing Layer                       │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │ TensorFlow  │  │ scikit-learn│  │    FAISS    │             │
-│  │   LSTM      │  │ Random Forest│  │ Vector DB   │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │    GARCH    │  │     VAR     │  │   Network   │             │
-│  │  Analysis   │  │   Models    │  │  Analysis   │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
+│ AI/ML Processing Layer │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ TensorFlow │ │ scikit-learn│ │ FAISS │ │
+│ │ LSTM │ │ Random Forest│ │ Vector DB │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ GARCH │ │ VAR │ │ Network │ │
+│ │ Analysis │ │ Models │ │ Analysis │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
-                              │
+│
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Data Storage Layer                           │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │   SQLite    │  │   Vector    │  │   Cache     │             │
-│  │  Database   │  │   Storage   │  │  Storage    │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
+│ Data Storage Layer │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ SQLite │ │ Vector │ │ Cache │ │
+│ │ Database │ │ Storage │ │ Storage │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
-                              │
+│
 ┌─────────────────────────────────────────────────────────────────┐
-│                    External Data Sources                        │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │   Yahoo     │  │    FRED     │  │  CoinGecko  │             │
-│  │  Finance    │  │     API     │  │             │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
+│ External Data Sources │
+│ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│ │ Yahoo │ │ FRED │ │ CoinGecko │ │
+│ │ Finance │ │ API │ │ │ │
+│ └─────────────┘ └─────────────┘ └─────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Launch the Complete System
 
@@ -98,8 +98,8 @@ The Multi-Market Correlation Engine is now a **complete, production-ready** fina
 cd multi_market_correlation_engine
 
 # Activate virtual environment
-source correlation_env/bin/activate  # On macOS/Linux
-# or correlation_env\Scripts\activate  # On Windows
+source correlation_env/bin/activate # On macOS/Linux
+# or correlation_env\Scripts\activate # On Windows
 
 # Launch the complete system
 python launch_complete_system.py
@@ -107,30 +107,30 @@ python launch_complete_system.py
 
 ### 2. Access the System
 
-- **🌐 Frontend Dashboard**: http://localhost:3001
-- **📊 Workflow Monitor**: http://localhost:3001/workflow
-- **🤖 LLM Assistant**: http://localhost:3001/llm-assistant
-- **🔍 Vector Search**: http://localhost:3001/vector-search
-- **📈 Market Analysis**: http://localhost:3001/market-analysis
-- **⚡ API Documentation**: http://localhost:8000/docs
+- ** Frontend Dashboard**: http://localhost:3001
+- ** Workflow Monitor**: http://localhost:3001/workflow
+- ** LLM Assistant**: http://localhost:3001/llm-assistant
+- ** Vector Search**: http://localhost:3001/vector-search
+- ** Market Analysis**: http://localhost:3001/market-analysis
+- ** API Documentation**: http://localhost:8000/docs
 - **💓 Health Check**: http://localhost:8000/health
 
-## 🔄 Workflow Process Flow
+## Workflow Process Flow
 
 ### Complete Analysis Workflow (12 Stages)
 
-1. **🔄 Initialization** - Setup workflow parameters and validate inputs
-2. **📊 Data Collection** - Multi-source market data gathering
-3. **✅ Data Validation** - Quality checks and completeness verification
-4. **📈 Correlation Analysis** - Dynamic correlation matrix computation
-5. **🤖 ML Analysis** - Train Random Forest and LSTM models
-6. **🎯 Regime Detection** - Identify market regime patterns
-7. **�� Network Analysis** - Build correlation network topology
+1. ** Initialization** - Setup workflow parameters and validate inputs
+2. ** Data Collection** - Multi-source market data gathering
+3. ** Data Validation** - Quality checks and completeness verification
+4. ** Correlation Analysis** - Dynamic correlation matrix computation
+5. ** ML Analysis** - Train Random Forest and LSTM models
+6. ** Regime Detection** - Identify market regime patterns
+7. ** Network Analysis** - Build correlation network topology
 8. **🧠 LLM Processing** - Generate AI-powered insights and explanations
-9. **💾 Vector Storage** - Store patterns in FAISS vector database
-10. **📝 Recommendation** - Generate investment recommendations
-11. **📋 Reporting** - Create comprehensive analysis reports
-12. **🔄 Frontend Update** - Update dashboard with real-time results
+9. ** Vector Storage** - Store patterns in FAISS vector database
+10. ** Recommendation** - Generate investment recommendations
+11. ** Reporting** - Create comprehensive analysis reports
+12. ** Frontend Update** - Update dashboard with real-time results
 
 ### Workflow Types
 
@@ -138,38 +138,38 @@ python launch_complete_system.py
 - **Quick Analysis** - Essential stages only (2-3 minutes)
 - **ML Focused** - Data + ML + Recommendations (3-5 minutes)
 
-## 🛠️ API Endpoints
+## API Endpoints
 
 ### Workflow Management
 ```http
 POST /workflow/start
-GET  /workflow/{workflow_id}/status
-GET  /workflow/{workflow_id}/results
-GET  /workflow/list
+GET /workflow/{workflow_id}/status
+GET /workflow/{workflow_id}/results
+GET /workflow/list
 POST /demo/full-workflow
 ```
 
 ### Data Access
 ```http
-GET  /data/market?symbols=AAPL,MSFT,GOOGL
-GET  /data/correlations?symbols=AAPL,MSFT&window=30
+GET /data/market?symbols=AAPL,MSFT,GOOGL
+GET /data/correlations?symbols=AAPL,MSFT&window=30
 ```
 
 ### LLM & AI
 ```http
-GET  /llm/status
+GET /llm/status
 POST /llm/chat
-GET  /llm/vector/stats
+GET /llm/vector/stats
 POST /llm/vector/search
 ```
 
 ### Health & Monitoring
 ```http
-GET  /health
-GET  /health/detailed
+GET /health
+GET /health/detailed
 ```
 
-## �� AI/ML Capabilities
+## AI/ML Capabilities
 
 ### Machine Learning Models
 - **Random Forest Regressor** - Feature-based correlation prediction
@@ -188,7 +188,7 @@ GET  /health/detailed
 - **Embedding Storage** - Market pattern and correlation embeddings
 - **Semantic Search** - Find similar market conditions and patterns
 
-## 📊 Frontend Features
+## Frontend Features
 
 ### Workflow Dashboard
 - **Real-time Monitoring** - Live workflow progress tracking
@@ -206,7 +206,7 @@ GET  /health/detailed
 - **Contextual Responses** - AI-powered financial insights
 - **Pattern Matching** - Vector-based similarity search
 
-## ⚙️ Configuration
+## Configuration
 
 ### System Configuration (src/config/)
 - **data_sources.yaml** - API endpoints and data source settings
@@ -215,12 +215,12 @@ GET  /health/detailed
 
 ### Environment Variables
 ```bash
-YAHOO_FINANCE_API_KEY=your_key  # Optional
-FRED_API_KEY=your_key          # Optional
-OPENAI_API_KEY=your_key        # Optional for enhanced LLM
+YAHOO_FINANCE_API_KEY=your_key # Optional
+FRED_API_KEY=your_key # Optional
+OPENAI_API_KEY=your_key # Optional for enhanced LLM
 ```
 
-## 🔧 Advanced Usage
+## Advanced Usage
 
 ### Custom Workflows
 ```python
@@ -231,9 +231,9 @@ wm = get_workflow_manager()
 
 # Start custom workflow
 workflow_id = wm.start_comprehensive_workflow(
-    symbols=['AAPL', 'MSFT', 'GOOGL'],
-    workflow_type='ml_focused',
-    parameters={'quick_mode': True}
+symbols=['AAPL', 'MSFT', 'GOOGL'],
+workflow_type='ml_focused',
+parameters={'quick_mode': True}
 )
 
 # Monitor progress
@@ -246,8 +246,8 @@ import requests
 
 # Start workflow via API
 response = requests.post('http://localhost:8000/workflow/start', json={
-    'symbols': ['AAPL', 'TSLA'],
-    'workflow_type': 'full_analysis'
+'symbols': ['AAPL', 'TSLA'],
+'workflow_type': 'full_analysis'
 })
 
 workflow_id = response.json()['workflow_id']
@@ -256,7 +256,7 @@ workflow_id = response.json()['workflow_id']
 status = requests.get(f'http://localhost:8000/workflow/{workflow_id}/status')
 ```
 
-## 📈 Performance Metrics
+## Performance Metrics
 
 ### Benchmarks (On M1 MacBook Pro)
 - **Data Collection**: ~2 seconds for 5 symbols
@@ -272,43 +272,43 @@ status = requests.get(f'http://localhost:8000/workflow/{workflow_id}/status')
 - **Data Retention**: Configurable (default: 2 years)
 - **API Rate Limits**: Built-in throttling and retry logic
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
 1. **Port Conflicts**
-   ```bash
-   # Check if ports are in use
-   lsof -i :8000  # API server
-   lsof -i :3001  # Frontend
-   ```
+```bash
+# Check if ports are in use
+lsof -i :8000 # API server
+lsof -i :3001 # Frontend
+```
 
 2. **Dependencies Missing**
-   ```bash
-   # Reinstall all dependencies
-   pip install -r requirements.txt
-   cd frontend && npm install
-   ```
+```bash
+# Reinstall all dependencies
+pip install -r requirements.txt
+cd frontend && npm install
+```
 
 3. **Database Issues**
-   ```bash
-   # Reset database
-   rm -rf data/*.db
-   python -c "from src.data.database_manager import DatabaseManager; DatabaseManager()"
-   ```
+```bash
+# Reset database
+rm -rf data/*.db
+python -c "from src.data.database_manager import DatabaseManager; DatabaseManager()"
+```
 
 4. **ML Model Errors**
-   ```bash
-   # Check TensorFlow installation
-   python -c "import tensorflow as tf; print(tf.__version__)"
-   ```
+```bash
+# Check TensorFlow installation
+python -c "import tensorflow as tf; print(tf.__version__)"
+```
 
 ### Logs and Monitoring
 - **System Logs**: Check console output for detailed execution logs
 - **Error Tracking**: All errors logged with timestamps and context
 - **Health Monitoring**: Real-time component status via /health endpoint
 
-## 🚀 Deployment
+## Deployment
 
 ### Production Deployment
 ```bash
@@ -329,7 +329,7 @@ docker build -t correlation-engine .
 docker run -p 8000:8000 -p 3001:3001 correlation-engine
 ```
 
-## 🎯 Next Steps
+## Next Steps
 
 ### Potential Enhancements
 - **Real-time WebSocket Updates** - Live data streaming
@@ -345,32 +345,32 @@ docker run -p 8000:8000 -p 3001:3001 correlation-engine
 - **Slack/Discord** - Alert notifications
 - **Jupyter Notebooks** - Research environment integration
 
-## 🏆 Success Metrics
+## Success Metrics
 
 ### System Achievements
-- ✅ **100% Component Integration** - All modules working seamlessly
-- ✅ **Real-time Processing** - Sub-second response times
-- ✅ **Production Ready** - Error handling, logging, monitoring
-- ✅ **Scalable Architecture** - Agent-based, microservices-ready
-- ✅ **Modern UI/UX** - Responsive, interactive, real-time updates
-- ✅ **Comprehensive Testing** - End-to-end workflow validation
-- ✅ **Documentation Complete** - API docs, user guides, technical specs
+- **100% Component Integration** - All modules working seamlessly
+- **Real-time Processing** - Sub-second response times
+- **Production Ready** - Error handling, logging, monitoring
+- **Scalable Architecture** - Agent-based, microservices-ready
+- **Modern UI/UX** - Responsive, interactive, real-time updates
+- **Comprehensive Testing** - End-to-end workflow validation
+- **Documentation Complete** - API docs, user guides, technical specs
 
 ---
 
-## 🎉 Congratulations!
+## Congratulations!
 
 You now have a **complete, production-ready Multi-Market Correlation Engine** with:
 
-- 🔄 **Seamless Workflow Orchestration**
-- 🤖 **Advanced AI/ML Capabilities** 
-- 🌐 **Modern Web Interface**
-- ⚡ **Real-time Processing**
-- 📊 **Comprehensive Analytics**
-- 🛠️ **Enterprise-grade Architecture**
+- **Seamless Workflow Orchestration**
+- **Advanced AI/ML Capabilities**
+- **Modern Web Interface**
+- **Real-time Processing**
+- **Comprehensive Analytics**
+- **Enterprise-grade Architecture**
 
 **Open http://localhost:3001 and start exploring the future of financial analytics!**
 
 ---
 
-*Built with ❤️ by the Multi-Market Correlation Engine Team*
+*Built with by the Multi-Market Correlation Engine Team*
