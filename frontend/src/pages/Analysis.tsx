@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   CpuChipIcon,
@@ -9,6 +9,11 @@ import {
   AcademicCapIcon,
   LightBulbIcon,
   PlayIcon,
+  MagnifyingGlassIcon,
+  ClockIcon,
+  AdjustmentsHorizontalIcon,
+  InformationCircleIcon,
+  CalendarIcon
 } from '@heroicons/react/24/outline';
 import {
   LineChart,
@@ -24,6 +29,12 @@ import {
   Scatter,
   BarChart,
   Bar,
+  Legend,
+  Cell,
+  PieChart,
+  Pie,
+  RadialBarChart,
+  RadialBar,
 } from 'recharts';
 import Card from '@/components/ui/Card';
 

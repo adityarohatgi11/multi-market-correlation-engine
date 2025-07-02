@@ -5,7 +5,6 @@ import {
   HomeIcon,
   ChartBarIcon,
   ChatBubbleLeftRightIcon,
-  MagnifyingGlassIcon,
   BriefcaseIcon,
   DocumentTextIcon,
   CogIcon,
@@ -16,7 +15,6 @@ import {
   HomeIcon as HomeIconSolid,
   ChartBarIcon as ChartBarIconSolid,
   ChatBubbleLeftRightIcon as ChatBubbleLeftRightIconSolid,
-  MagnifyingGlassIcon as MagnifyingGlassIconSolid,
   BriefcaseIcon as BriefcaseIconSolid,
   DocumentTextIcon as DocumentTextIconSolid,
   CogIcon as CogIconSolid,
@@ -63,14 +61,7 @@ const navigation: NavigationItem[] = [
     href: '/llm-assistant',
     icon: ChatBubbleLeftRightIcon,
     iconSolid: ChatBubbleLeftRightIconSolid,
-    description: 'AI-powered financial insights',
-  },
-  {
-    name: 'Vector Search',
-    href: '/vector-search',
-    icon: MagnifyingGlassIcon,
-    iconSolid: MagnifyingGlassIconSolid,
-    description: 'FAISS semantic pattern matching',
+    description: 'AI-powered insights & vector search',
   },
   {
     name: 'Portfolio',
@@ -120,7 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
   return (
     <>
       {/* Desktop sidebar */}
-      <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
+      <div className={`hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 transition-transform duration-300 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto">
           <div className="flex items-center flex-shrink-0 px-4">
             <div className="flex items-center">
@@ -205,9 +196,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
             >
-              <XMarkIcon className="h-5 w-5" />
+              <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
           
@@ -252,8 +243,8 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
             })}
           </nav>
           
-          {/* Mobile Footer */}
-          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+          {/* Mobile footer */}
+          <div className="flex-shrink-0 border-t border-gray-200 p-4">
             <div className="flex items-center">
               <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
               <span className="text-sm text-gray-500">System Online</span>
@@ -261,17 +252,6 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
           </div>
         </div>
       </motion.div>
-
-      {/* Mobile overlay */}
-      {open && (
-        <motion.div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-        />
-      )}
     </>
   )
 }

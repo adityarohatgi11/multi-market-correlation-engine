@@ -15,12 +15,14 @@ import type {
   MarketAnalysisRequest,
   MarketAnalysis,
   QueryParams,
-} from '@/types'
+} from '../types'
 
 class ApiClient {
   private instance: AxiosInstance
+  private baseURL: string
 
   constructor(baseURL: string = '/api') {
+    this.baseURL = baseURL
     this.instance = axios.create({
       baseURL,
       timeout: 30000,
@@ -30,6 +32,10 @@ class ApiClient {
     })
 
     this.setupInterceptors()
+  }
+
+  get apiBaseURL(): string {
+    return this.baseURL
   }
 
   private setupInterceptors(): void {
@@ -73,6 +79,41 @@ class ApiClient {
   private async request<T>(config: AxiosRequestConfig): Promise<T> {
     const response = await this.instance.request<ApiResponse<T>>(config)
     return (response.data as any).data || response.data as T
+  }
+
+  // Generic HTTP methods
+  async get<T>(url: string, params?: QueryParams): Promise<T> {
+    return this.request({
+      method: 'GET',
+      url,
+      params,
+    })
+  }
+
+  async post<T>(url: string, data?: any, params?: QueryParams): Promise<T> {
+    return this.request({
+      method: 'POST',
+      url,
+      data,
+      params,
+    })
+  }
+
+  async put<T>(url: string, data?: any, params?: QueryParams): Promise<T> {
+    return this.request({
+      method: 'PUT',
+      url,
+      data,
+      params,
+    })
+  }
+
+  async delete<T>(url: string, params?: QueryParams): Promise<T> {
+    return this.request({
+      method: 'DELETE',
+      url,
+      params,
+    })
   }
 
   // Health Check

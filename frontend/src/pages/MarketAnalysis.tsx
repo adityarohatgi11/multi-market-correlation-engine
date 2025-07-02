@@ -1,13 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import {
-  ChartBarIcon,
-  ArrowTrendingUpIcon as TrendingUpIcon,
-  ArrowTrendingDownIcon as TrendingDownIcon,
-  ClockIcon,
-  CalendarDaysIcon,
-  FunnelIcon,
-  CogIcon,
+  MagnifyingGlassIcon,
+  AdjustmentsHorizontalIcon,
+  PlayIcon,
+  InformationCircleIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
+  ExclamationTriangleIcon,
   ArrowPathIcon,
+  FunnelIcon,
+  CalendarDaysIcon
 } from '@heroicons/react/24/outline'
 import {
   LineChart,
@@ -33,8 +36,11 @@ const MarketAnalysis: React.FC = () => {
   const [correlationMethod, setCorrelationMethod] = useState<'pearson' | 'spearman' | 'kendall'>('pearson')
   const [rollingWindow, setRollingWindow] = useState<number>(30)
   const [chartType, setChartType] = useState<'line' | 'area' | 'bar'>('line')
+  const [loading, setLoading] = useState<boolean>(false)
+  const [priceData, setPriceData] = useState<any[]>([])
+  const [correlationData, setCorrelationData] = useState<any[]>([])
 
-  // Asset groups from your Streamlit dashboard
+  // Asset groups from your backend configuration
   const symbolGroups = {
     "Tech Stocks": ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA"],
     "Financial": ["JPM", "BAC", "GS", "WFC", "C", "MS"],
@@ -60,35 +66,72 @@ const MarketAnalysis: React.FC = () => {
     "5 Years": 1825
   }
 
-  // Mock data for demonstration
-  const priceData = [
-    { date: '2024-01-01', AAPL: 150, GOOGL: 2800, MSFT: 320, TSLA: 240 },
-    { date: '2024-01-02', AAPL: 152, GOOGL: 2820, MSFT: 325, TSLA: 245 },
-    { date: '2024-01-03', AAPL: 148, GOOGL: 2790, MSFT: 318, TSLA: 238 },
-    { date: '2024-01-04', AAPL: 155, GOOGL: 2850, MSFT: 330, TSLA: 250 },
-    { date: '2024-01-05', AAPL: 157, GOOGL: 2870, MSFT: 335, TSLA: 255 },
-    { date: '2024-01-06', AAPL: 159, GOOGL: 2890, MSFT: 340, TSLA: 260 },
-  ]
+  // Initialize mock data on component mount
+  useEffect(() => {
+    generateMockData()
+  }, [selectedSymbols, timeRange])
 
-  const correlationData = [
-    { symbol: 'AAPL', AAPL: 1.0, GOOGL: 0.75, MSFT: 0.68, TSLA: 0.42 },
-    { symbol: 'GOOGL', AAPL: 0.75, GOOGL: 1.0, MSFT: 0.82, TSLA: 0.38 },
-    { symbol: 'MSFT', AAPL: 0.68, GOOGL: 0.82, MSFT: 1.0, TSLA: 0.35 },
-    { symbol: 'TSLA', AAPL: 0.42, GOOGL: 0.38, MSFT: 0.35, TSLA: 1.0 },
-  ]
+  const generateMockData = () => {
+    setLoading(true)
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      // Generate mock price data based on selected symbols
+      const mockPriceData = []
+      const baseDate = new Date()
+      
+      for (let i = 0; i < 30; i++) {
+        const date = new Date(baseDate.getTime() - (29 - i) * 24 * 60 * 60 * 1000)
+        const dataPoint: any = {
+          date: date.toISOString().split('T')[0]
+        }
+        
+        selectedSymbols.forEach((symbol, index) => {
+          const basePrice = 100 + (index * 50) + Math.random() * 100
+          const variation = Math.sin(i * 0.1) * 10 + Math.random() * 20 - 10
+          dataPoint[symbol] = Math.round((basePrice + variation) * 100) / 100
+        })
+        
+        mockPriceData.push(dataPoint)
+      }
+      
+      // Generate mock correlation data
+      const mockCorrelationData = selectedSymbols.map(symbol1 => {
+        const row: any = { symbol: symbol1 }
+        selectedSymbols.forEach(symbol2 => {
+          if (symbol1 === symbol2) {
+            row[symbol2] = 1.0
+          } else {
+            // Generate deterministic correlation based on symbol names
+            const hash = (symbol1 + symbol2).split('').reduce((a, b) => {
+              a = ((a << 5) - a) + b.charCodeAt(0)
+              return a & a
+            }, 0)
+            row[symbol2] = Math.round((Math.abs(hash) % 100) / 100 * 100) / 100
+          }
+        })
+        return row
+      })
+      
+      setPriceData(mockPriceData)
+      setCorrelationData(mockCorrelationData)
+      setLoading(false)
+    }, 500) // 500ms delay to simulate loading
+  }
 
   const handleSymbolToggle = (symbol: string) => {
-    setSelectedSymbols(prev => 
-      prev.includes(symbol) 
-        ? prev.filter(s => s !== symbol)
-        : [...prev, symbol]
-    )
+    const newSelection = selectedSymbols.includes(symbol) 
+      ? selectedSymbols.filter(s => s !== symbol)
+      : [...selectedSymbols, symbol]
+    
+    setSelectedSymbols(newSelection)
   }
 
   const handleGroupChange = (group: string) => {
     setSelectedGroup(group)
     if (group !== 'Custom') {
-      setSelectedSymbols(symbolGroups[group as keyof typeof symbolGroups])
+      const groupSymbols = symbolGroups[group as keyof typeof symbolGroups] || []
+      setSelectedSymbols(groupSymbols.slice(0, 4)) // Limit to 4 symbols for better visualization
     }
   }
 
@@ -110,71 +153,95 @@ const MarketAnalysis: React.FC = () => {
   }
 
   const renderChart = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          <span className="ml-2 text-gray-600">Loading market data...</span>
+        </div>
+      )
+    }
+
+    if (!priceData.length || !selectedSymbols.length) {
+      return (
+        <div className="flex items-center justify-center h-64 text-gray-500">
+          <ExclamationTriangleIcon className="w-8 h-8 mr-2" />
+          <span>No data available for selected symbols</span>
+        </div>
+      )
+    }
+
     const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
     
     switch (chartType) {
       case 'area':
         return (
-          <AreaChart data={priceData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis dataKey="date" stroke="#6b7280" fontSize={12} />
-            <YAxis stroke="#6b7280" fontSize={12} />
-            <Tooltip />
-            {selectedSymbols.map((symbol, index) => (
-              <Area
-                key={symbol}
-                type="monotone"
-                dataKey={symbol}
-                stackId="1"
-                stroke={colors[index % colors.length]}
-                fill={colors[index % colors.length]}
-                fillOpacity={0.3}
-              />
-            ))}
-          </AreaChart>
+          <ResponsiveContainer width="100%" height={400}>
+            <AreaChart data={priceData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="date" stroke="#6b7280" fontSize={12} />
+              <YAxis stroke="#6b7280" fontSize={12} />
+              <Tooltip />
+              {selectedSymbols.map((symbol, index) => (
+                <Area
+                  key={symbol}
+                  type="monotone"
+                  dataKey={symbol}
+                  stackId="1"
+                  stroke={colors[index % colors.length]}
+                  fill={colors[index % colors.length]}
+                  fillOpacity={0.3}
+                />
+              ))}
+            </AreaChart>
+          </ResponsiveContainer>
         )
       case 'bar':
         return (
-          <BarChart data={priceData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis dataKey="date" stroke="#6b7280" fontSize={12} />
-            <YAxis stroke="#6b7280" fontSize={12} />
-            <Tooltip />
-            {selectedSymbols.map((symbol, index) => (
-              <Bar
-                key={symbol}
-                dataKey={symbol}
-                fill={colors[index % colors.length]}
-              />
-            ))}
-          </BarChart>
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={priceData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="date" stroke="#6b7280" fontSize={12} />
+              <YAxis stroke="#6b7280" fontSize={12} />
+              <Tooltip />
+              {selectedSymbols.map((symbol, index) => (
+                <Bar
+                  key={symbol}
+                  dataKey={symbol}
+                  fill={colors[index % colors.length]}
+                />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
         )
       default:
         return (
-          <LineChart data={priceData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis dataKey="date" stroke="#6b7280" fontSize={12} />
-            <YAxis stroke="#6b7280" fontSize={12} />
-            <Tooltip 
-              contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #e5e7eb',
-                borderRadius: '8px',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              }}
-            />
-            {selectedSymbols.map((symbol, index) => (
-              <Line
-                key={symbol}
-                type="monotone"
-                dataKey={symbol}
-                stroke={colors[index % colors.length]}
-                strokeWidth={2}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={priceData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="date" stroke="#6b7280" fontSize={12} />
+              <YAxis stroke="#6b7280" fontSize={12} />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: '#fff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                }}
               />
-            ))}
-          </LineChart>
+              {selectedSymbols.map((symbol, index) => (
+                <Line
+                  key={symbol}
+                  type="monotone"
+                  dataKey={symbol}
+                  stroke={colors[index % colors.length]}
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              ))}
+            </LineChart>
+          </ResponsiveContainer>
         )
     }
   }
@@ -189,8 +256,12 @@ const MarketAnalysis: React.FC = () => {
             Advanced market data and correlation analysis with customizable parameters
           </p>
         </div>
-        <button className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-          <ArrowPathIcon className="w-4 h-4 mr-2" />
+        <button 
+          onClick={generateMockData}
+          disabled={loading}
+          className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+        >
+          <ArrowPathIcon className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh Data
         </button>
       </div>
@@ -385,9 +456,7 @@ const MarketAnalysis: React.FC = () => {
         title={`Price Performance - ${chartType.charAt(0).toUpperCase() + chartType.slice(1)} Chart`}
         subtitle={`${timeRange} price movements for selected symbols (${startDate} to ${endDate})`}
       >
-        <ResponsiveContainer width="100%" height={400}>
-          {renderChart()}
-        </ResponsiveContainer>
+        {renderChart()}
       </Card>
 
       {/* Statistics and Correlation */}
@@ -414,9 +483,9 @@ const MarketAnalysis: React.FC = () => {
                       parseFloat(changePercent) >= 0 ? 'text-green-600' : 'text-red-600'
                     }`}>
                       {parseFloat(changePercent) >= 0 ? (
-                        <TrendingUpIcon className="w-4 h-4 mr-1" />
+                        <ArrowTrendingUpIcon className="w-4 h-4 mr-1" />
                       ) : (
-                        <TrendingDownIcon className="w-4 h-4 mr-1" />
+                        <ArrowTrendingDownIcon className="w-4 h-4 mr-1" />
                       )}
                       {changePercent}%
                     </div>

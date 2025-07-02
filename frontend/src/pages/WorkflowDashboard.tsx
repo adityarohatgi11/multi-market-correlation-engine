@@ -4,460 +4,489 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   PlayIcon,
   PauseIcon,
-  CheckCircleIcon,
-  XCircleIcon,
+  StopIcon,
   ClockIcon,
-  CpuChipIcon,
-  ChartBarIcon,
-  BrainIcon,
-  DatabaseIcon,
-  DocumentTextIcon,
+  CheckCircleIcon,
+  ExclamationCircleIcon,
   ArrowPathIcon,
+  Cog6ToothIcon,
+  DocumentTextIcon,
+  CalendarDaysIcon,
+  ChartBarIcon,
+  BoltIcon,
+  CloudArrowDownIcon,
+  CpuChipIcon
 } from '@heroicons/react/24/outline'
 import Card from '@/components/ui/Card'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
-import apiClient from '@/api/client'
+import { toast } from 'react-hot-toast'
 
-interface WorkflowStage {
+interface WorkflowStep {
   id: string
   name: string
-  description: string
-  icon: React.ComponentType<any>
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped'
-  duration?: number
+  status: 'pending' | 'running' | 'completed' | 'failed'
+  duration?: string
+  output?: string
   error?: string
 }
 
-interface WorkflowResult {
-  workflow_id: string
-  status: string
-  current_stage: string
-  stages_completed: string[]
-  errors: string[]
-  started_at: string
-  completed_at?: string
-  duration?: number
-  results_summary: Record<string, boolean>
-}
-
-const WORKFLOW_STAGES: Record<string, { name: string; description: string; icon: React.ComponentType<any> }> = {
-  initialization: {
-    name: 'Initialization',
-    description: 'Setting up workflow parameters',
-    icon: PlayIcon
-  },
-  data_collection: {
-    name: 'Data Collection',
-    description: 'Gathering market data from multiple sources',
-    icon: DatabaseIcon
-  },
-  data_validation: {
-    name: 'Data Validation',
-    description: 'Validating data quality and completeness',
-    icon: CheckCircleIcon
-  },
-  correlation_analysis: {
-    name: 'Correlation Analysis',
-    description: 'Computing asset correlation matrices',
-    icon: ChartBarIcon
-  },
-  ml_analysis: {
-    name: 'ML Analysis',
-    description: 'Training machine learning models',
-    icon: BrainIcon
-  },
-  regime_detection: {
-    name: 'Regime Detection',
-    description: 'Identifying market regime patterns',
-    icon: CpuChipIcon
-  },
-  network_analysis: {
-    name: 'Network Analysis',
-    description: 'Building correlation networks',
-    icon: ChartBarIcon
-  },
-  llm_processing: {
-    name: 'LLM Processing',
-    description: 'Generating AI-powered insights',
-    icon: BrainIcon
-  },
-  vector_storage: {
-    name: 'Vector Storage',
-    description: 'Storing embeddings in vector database',
-    icon: DatabaseIcon
-  },
-  recommendation: {
-    name: 'Recommendations',
-    description: 'Generating investment recommendations',
-    icon: DocumentTextIcon
-  },
-  reporting: {
-    name: 'Report Generation',
-    description: 'Creating comprehensive reports',
-    icon: DocumentTextIcon
-  },
-  frontend_update: {
-    name: 'Frontend Update',
-    description: 'Updating dashboard with results',
-    icon: ArrowPathIcon
-  }
+interface WorkflowRun {
+  id: string
+  name: string
+  status: 'idle' | 'running' | 'completed' | 'failed'
+  startTime?: string
+  endTime?: string
+  duration?: string
+  steps: WorkflowStep[]
+  totalSteps: number
+  completedSteps: number
 }
 
 const WorkflowDashboard: React.FC = () => {
-  const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null)
-  const [workflowSymbols, setWorkflowSymbols] = useState(['AAPL', 'MSFT', 'GOOGL'])
-  const [workflowType, setWorkflowType] = useState('full_analysis')
-
+  const [selectedWorkflow, setSelectedWorkflow] = useState<string>('etl_pipeline')
+  const [autoRefresh, setAutoRefresh] = useState<boolean>(true)
   const queryClient = useQueryClient()
 
-  // Fetch workflow list
-  const { data: workflowList, isLoading: listLoading } = useQuery({
-    queryKey: ['workflows'],
-    queryFn: () => apiClient.request({ method: 'GET', url: '/workflow/list' }),
-    refetchInterval: 5000, // Refresh every 5 seconds
-  })
-
-  // Fetch specific workflow status
-  const { data: workflowStatus, isLoading: statusLoading } = useQuery({
-    queryKey: ['workflow-status', selectedWorkflow],
-    queryFn: () => selectedWorkflow 
-      ? apiClient.request({ method: 'GET', url: `/workflow/${selectedWorkflow}/status` })
-      : null,
-    enabled: !!selectedWorkflow,
-    refetchInterval: 2000, // Refresh every 2 seconds for active workflows
-  })
-
-  // Start workflow mutation
-  const startWorkflowMutation = useMutation({
-    mutationFn: (params: { symbols: string[], workflow_type: string }) =>
-      apiClient.request({
-        method: 'POST',
-        url: '/workflow/start',
-        data: params,
-      }),
-    onSuccess: (data) => {
-      setSelectedWorkflow(data.workflow_id)
-      queryClient.invalidateQueries({ queryKey: ['workflows'] })
+  // Mock workflow data - in production this would come from your backend
+  const workflows: WorkflowRun[] = [
+    {
+      id: 'etl_pipeline',
+      name: 'ETL Data Pipeline',
+      status: 'idle',
+      totalSteps: 7,
+      completedSteps: 7,
+      duration: '18m 32s',
+      endTime: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+      steps: [
+        { id: 'health_check', name: 'Data Source Health Check', status: 'completed', duration: '2s' },
+        { id: 'yahoo_finance', name: 'Yahoo Finance Collection', status: 'completed', duration: '8m 15s' },
+        { id: 'fred_data', name: 'FRED Economic Data', status: 'completed', duration: '3m 45s' },
+        { id: 'validation', name: 'Data Validation & Quality Check', status: 'completed', duration: '1m 30s' },
+        { id: 'database_storage', name: 'Database Storage', status: 'completed', duration: '2m 20s' },
+        { id: 'index_update', name: 'Index Updating', status: 'completed', duration: '1m 45s' },
+        { id: 'cache_refresh', name: 'Cache Refresh', status: 'completed', duration: '58s' }
+      ]
     },
-  })
-
-  // Demo workflow mutation
-  const demoWorkflowMutation = useMutation({
-    mutationFn: () =>
-      apiClient.request({
-        method: 'POST',
-        url: '/demo/full-workflow',
-      }),
-    onSuccess: (data) => {
-      setSelectedWorkflow(data.workflow_id)
-      queryClient.invalidateQueries({ queryKey: ['workflows'] })
+    {
+      id: 'correlation_analysis',
+      name: 'Correlation Analysis',
+      status: 'completed',
+      totalSteps: 5,
+      completedSteps: 5,
+      duration: '5m 12s',
+      endTime: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      steps: [
+        { id: 'data_preparation', name: 'Data Preparation', status: 'completed', duration: '45s' },
+        { id: 'correlation_calculation', name: 'Correlation Calculation', status: 'completed', duration: '2m 30s' },
+        { id: 'statistical_tests', name: 'Statistical Significance Tests', status: 'completed', duration: '1m 15s' },
+        { id: 'visualization', name: 'Visualization Generation', status: 'completed', duration: '25s' },
+        { id: 'report_generation', name: 'Report Generation', status: 'completed', duration: '17s' }
+      ]
     },
+    {
+      id: 'risk_assessment',
+      name: 'Portfolio Risk Assessment',
+      status: 'failed',
+      totalSteps: 4,
+      completedSteps: 2,
+      duration: '2m 45s',
+      endTime: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+      steps: [
+        { id: 'portfolio_data', name: 'Portfolio Data Loading', status: 'completed', duration: '15s' },
+        { id: 'var_calculation', name: 'VaR Calculation', status: 'completed', duration: '1m 30s' },
+        { id: 'stress_testing', name: 'Stress Testing', status: 'failed', duration: '1m', error: 'Market scenario data unavailable' },
+        { id: 'risk_report', name: 'Risk Report Generation', status: 'pending' }
+      ]
+    },
+    {
+      id: 'ml_model_training',
+      name: 'ML Model Training',
+      status: 'running',
+      totalSteps: 6,
+      completedSteps: 3,
+      startTime: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+      steps: [
+        { id: 'feature_engineering', name: 'Feature Engineering', status: 'completed', duration: '3m 20s' },
+        { id: 'data_splitting', name: 'Train/Test Split', status: 'completed', duration: '45s' },
+        { id: 'model_training', name: 'Model Training', status: 'completed', duration: '8m 15s' },
+        { id: 'hyperparameter_tuning', name: 'Hyperparameter Tuning', status: 'running' },
+        { id: 'model_validation', name: 'Model Validation', status: 'pending' },
+        { id: 'model_deployment', name: 'Model Deployment', status: 'pending' }
+      ]
+    }
+  ]
+
+  // Simulate API calls for workflow management
+  const triggerETL = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('http://localhost:8000/etl/trigger', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      return response.json()
+    },
+    onSuccess: (data) => {
+      toast.success('ETL Pipeline triggered successfully')
+      queryClient.invalidateQueries({ queryKey: ['etl-status'] })
+    },
+    onError: (error) => {
+      toast.error('Failed to trigger ETL pipeline')
+      console.error('ETL trigger error:', error)
+    }
   })
 
-  const getStageStatus = (stageId: string, workflow: WorkflowResult): 'pending' | 'running' | 'completed' | 'failed' | 'skipped' => {
-    if (workflow.stages_completed.includes(stageId)) {
-      return 'completed'
+  const triggerCorrelationAnalysis = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('http://localhost:8000/analysis/correlation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      return response.json()
+    },
+    onSuccess: () => {
+      toast.success('Correlation analysis started')
+    },
+    onError: () => {
+      toast.error('Failed to start correlation analysis')
     }
-    if (workflow.current_stage === stageId && workflow.status === 'running') {
-      return 'running'
-    }
-    if (workflow.errors.some(error => error.includes(stageId))) {
-      return 'failed'
-    }
-    if (workflow.results_summary[stageId] === false) {
-      return 'skipped'
-    }
-    return 'pending'
-  }
+  })
 
-  const getStageIcon = (status: string) => {
+  // Auto-refresh effect
+  useEffect(() => {
+    if (!autoRefresh) return
+
+    const interval = setInterval(() => {
+      // In production, this would fetch real-time workflow status
+      queryClient.invalidateQueries({ queryKey: ['workflows'] })
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [autoRefresh, queryClient])
+
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return <CheckCircleIcon className="w-6 h-6 text-green-500" />
+        return 'text-green-600 bg-green-100'
       case 'running':
-        return <ArrowPathIcon className="w-6 h-6 text-blue-500 animate-spin" />
+        return 'text-blue-600 bg-blue-100'
       case 'failed':
-        return <XCircleIcon className="w-6 h-6 text-red-500" />
-      case 'skipped':
-        return <ClockIcon className="w-6 h-6 text-yellow-500" />
+        return 'text-red-600 bg-red-100'
+      case 'pending':
+        return 'text-gray-600 bg-gray-100'
       default:
-        return <ClockIcon className="w-6 h-6 text-gray-400" />
+        return 'text-gray-600 bg-gray-100'
     }
   }
 
-  const renderWorkflowVisualization = (workflow: WorkflowResult) => {
-    const stages = Object.entries(WORKFLOW_STAGES).map(([id, config]) => ({
-      id,
-      ...config,
-      status: getStageStatus(id, workflow),
-    }))
-
-    return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {stages.map((stage, index) => (
-            <motion.div
-              key={stage.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className={`p-4 rounded-lg border-2 transition-all duration-300 ${
-                stage.status === 'completed'
-                  ? 'border-green-200 bg-green-50'
-                  : stage.status === 'running'
-                  ? 'border-blue-200 bg-blue-50'
-                  : stage.status === 'failed'
-                  ? 'border-red-200 bg-red-50'
-                  : stage.status === 'skipped'
-                  ? 'border-yellow-200 bg-yellow-50'
-                  : 'border-gray-200 bg-gray-50'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <div className="flex-shrink-0">
-                  {getStageIcon(stage.status)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-gray-900 truncate">
-                    {stage.name}
-                  </h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {stage.description}
-                  </p>
-                  <div className="mt-2">
-                    <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        stage.status === 'completed'
-                          ? 'bg-green-100 text-green-800'
-                          : stage.status === 'running'
-                          ? 'bg-blue-100 text-blue-800'
-                          : stage.status === 'failed'
-                          ? 'bg-red-100 text-red-800'
-                          : stage.status === 'skipped'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {stage.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    )
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircleIcon className="w-4 h-4" />
+      case 'running':
+        return <ArrowPathIcon className="w-4 h-4 animate-spin" />
+      case 'failed':
+        return <ExclamationCircleIcon className="w-4 h-4" />
+      case 'pending':
+        return <ClockIcon className="w-4 h-4" />
+      default:
+        return <ClockIcon className="w-4 h-4" />
+    }
   }
 
+  const selectedWorkflowData = workflows.find(w => w.id === selectedWorkflow)
+
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Workflow Dashboard</h1>
-        <p className="text-gray-600 mt-2">
-          Monitor and manage comprehensive analysis workflows
-        </p>
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Workflow Dashboard</h1>
+          <p className="text-gray-600">Monitor and manage automated workflows and processes</p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={autoRefresh}
+              onChange={(e) => setAutoRefresh(e.target.checked)}
+              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+            />
+            <span className="ml-2 text-sm text-gray-600">Auto-refresh</span>
+          </label>
+          <button
+            onClick={() => queryClient.invalidateQueries({ queryKey: ['workflows'] })}
+            className="flex items-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            <ArrowPathIcon className="w-4 h-4 mr-2" />
+            Refresh
+          </button>
+        </div>
       </div>
 
-      {/* Workflow Controls */}
-      <Card title="Start New Workflow" subtitle="Configure and launch a new analysis workflow">
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Symbols
-              </label>
-              <input
-                type="text"
-                value={workflowSymbols.join(', ')}
-                onChange={(e) => setWorkflowSymbols(e.target.value.split(',').map(s => s.trim()))}
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                placeholder="AAPL, MSFT, GOOGL"
-              />
+              <h3 className="text-sm font-medium text-gray-900">ETL Pipeline</h3>
+              <p className="text-xs text-gray-500">Data collection & processing</p>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Workflow Type
-              </label>
-              <select
-                value={workflowType}
-                onChange={(e) => setWorkflowType(e.target.value)}
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-              >
-                <option value="full_analysis">Full Analysis</option>
-                <option value="quick_analysis">Quick Analysis</option>
-                <option value="ml_focused">ML Focused</option>
-              </select>
-            </div>
-            <div className="flex items-end space-x-2">
-              <button
-                onClick={() => startWorkflowMutation.mutate({
-                  symbols: workflowSymbols,
-                  workflow_type: workflowType
-                })}
-                disabled={startWorkflowMutation.isPending}
-                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
-              >
-                {startWorkflowMutation.isPending ? (
-                  <LoadingSpinner size="sm" />
-                ) : (
-                  'Start Workflow'
-                )}
-              </button>
-              <button
-                onClick={() => demoWorkflowMutation.mutate()}
-                disabled={demoWorkflowMutation.isPending}
-                className="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700 disabled:opacity-50"
-              >
-                Demo
-              </button>
-            </div>
+            <button
+              onClick={() => triggerETL.mutate()}
+              disabled={triggerETL.isPending}
+              className="flex items-center px-3 py-1 bg-primary-600 text-white rounded text-sm hover:bg-primary-700 disabled:opacity-50"
+            >
+              <CloudArrowDownIcon className="w-4 h-4 mr-1" />
+              {triggerETL.isPending ? 'Starting...' : 'Run ETL'}
+            </button>
           </div>
-        </div>
-      </Card>
+        </Card>
 
-      {/* Active Workflows */}
-      <Card title="Active Workflows" subtitle="Current and recent workflow executions">
-        {listLoading ? (
-          <div className="flex justify-center py-8">
-            <LoadingSpinner />
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-900">Correlation Analysis</h3>
+              <p className="text-xs text-gray-500">Market correlation analysis</p>
+            </div>
+            <button
+              onClick={() => triggerCorrelationAnalysis.mutate()}
+              disabled={triggerCorrelationAnalysis.isPending}
+              className="flex items-center px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 disabled:opacity-50"
+            >
+              <ChartBarIcon className="w-4 h-4 mr-1" />
+              {triggerCorrelationAnalysis.isPending ? 'Starting...' : 'Analyze'}
+            </button>
           </div>
-        ) : workflowList?.workflows?.length > 0 ? (
-          <div className="space-y-4">
-            {workflowList.workflows.map((workflow: any) => (
-              <div
-                key={workflow.workflow_id}
-                className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                  selectedWorkflow === workflow.workflow_id
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-                onClick={() => setSelectedWorkflow(workflow.workflow_id)}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium text-gray-900">
-                      {workflow.workflow_id}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      Status: {workflow.status} • Stage: {workflow.current_stage}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      Started: {new Date(workflow.started_at).toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        workflow.status === 'completed'
-                          ? 'bg-green-100 text-green-800'
-                          : workflow.status === 'running'
-                          ? 'bg-blue-100 text-blue-800'
-                          : workflow.status === 'failed'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {workflow.status}
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-900">Model Training</h3>
+              <p className="text-xs text-gray-500">ML model retraining</p>
+            </div>
+            <button
+              className="flex items-center px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700"
+            >
+              <CpuChipIcon className="w-4 h-4 mr-1" />
+              Train
+            </button>
+          </div>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-900">Risk Assessment</h3>
+              <p className="text-xs text-gray-500">Portfolio risk calculation</p>
+            </div>
+            <button
+              className="flex items-center px-3 py-1 bg-orange-600 text-white rounded text-sm hover:bg-orange-700"
+            >
+              <BoltIcon className="w-4 h-4 mr-1" />
+              Assess
+            </button>
+          </div>
+        </Card>
+      </div>
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Workflow List */}
+        <div className="lg:col-span-1">
+          <Card>
+            <div className="p-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">Active Workflows</h3>
+            </div>
+            <div className="divide-y divide-gray-200">
+              {workflows.map((workflow) => (
+                <button
+                  key={workflow.id}
+                  onClick={() => setSelectedWorkflow(workflow.id)}
+                  className={`w-full text-left p-4 hover:bg-gray-50 transition-colors ${
+                    selectedWorkflow === workflow.id ? 'bg-primary-50 border-r-2 border-primary-500' : ''
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-gray-900">{workflow.name}</h4>
+                      <div className="flex items-center mt-1">
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(workflow.status)}`}>
+                          {getStatusIcon(workflow.status)}
+                          <span className="ml-1 capitalize">{workflow.status}</span>
+                        </span>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-500">
+                        {workflow.completedSteps}/{workflow.totalSteps} steps
+                        {workflow.duration && ` • ${workflow.duration}`}
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {workflow.stages_completed}/{Object.keys(WORKFLOW_STAGES).length} stages
-                    </p>
                   </div>
+                </button>
+              ))}
+            </div>
+          </Card>
+        </div>
+
+        {/* Workflow Details */}
+        <div className="lg:col-span-2">
+          <Card>
+            <div className="p-6">
+              {selectedWorkflowData ? (
+                <div>
+                  {/* Workflow Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">{selectedWorkflowData.name}</h3>
+                      <div className="flex items-center mt-2 space-x-4">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedWorkflowData.status)}`}>
+                          {getStatusIcon(selectedWorkflowData.status)}
+                          <span className="ml-2 capitalize">{selectedWorkflowData.status}</span>
+                        </span>
+                        {selectedWorkflowData.duration && (
+                          <span className="text-sm text-gray-500">
+                            Duration: {selectedWorkflowData.duration}
+                          </span>
+                        )}
+                        {selectedWorkflowData.endTime && (
+                          <span className="text-sm text-gray-500">
+                            Completed: {new Date(selectedWorkflowData.endTime).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      {selectedWorkflowData.status === 'running' && (
+                        <button className="flex items-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                          <StopIcon className="w-4 h-4 mr-2" />
+                          Stop
+                        </button>
+                      )}
+                      {selectedWorkflowData.status !== 'running' && (
+                        <button className="flex items-center px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">
+                          <PlayIcon className="w-4 h-4 mr-2" />
+                          Restart
+                        </button>
+                      )}
+                      <button className="flex items-center px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
+                        <Cog6ToothIcon className="w-4 h-4 mr-2" />
+                        Configure
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-900">Progress</span>
+                      <span className="text-sm text-gray-500">
+                        {selectedWorkflowData.completedSteps}/{selectedWorkflowData.totalSteps} steps
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-primary-600 h-2 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${(selectedWorkflowData.completedSteps / selectedWorkflowData.totalSteps) * 100}%`
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Workflow Steps */}
+                  <div>
+                    <h4 className="text-lg font-medium text-gray-900 mb-4">Workflow Steps</h4>
+                    <div className="space-y-4">
+                      {selectedWorkflowData.steps.map((step, index) => (
+                        <motion.div
+                          key={step.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className={`border rounded-lg p-4 ${
+                            step.status === 'running' ? 'border-blue-300 bg-blue-50' : 'border-gray-200'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <span className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${getStatusColor(step.status)}`}>
+                                {step.status === 'running' ? (
+                                  <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  index + 1
+                                )}
+                              </span>
+                              <div className="ml-4">
+                                <h5 className="text-sm font-medium text-gray-900">{step.name}</h5>
+                                {step.error && (
+                                  <p className="text-sm text-red-600 mt-1">{step.error}</p>
+                                )}
+                                {step.output && (
+                                  <p className="text-sm text-gray-600 mt-1">{step.output}</p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              {step.duration && (
+                                <span className="text-sm text-gray-500">{step.duration}</span>
+                              )}
+                              <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ml-2 ${getStatusColor(step.status)}`}>
+                                {getStatusIcon(step.status)}
+                                <span className="ml-1 capitalize">{step.status}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <DocumentTextIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Workflow Selected</h3>
+                  <p className="text-gray-500">Select a workflow from the list to view details</p>
+                </div>
+              )}
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <Card>
+        <div className="p-4 border-b border-gray-200">
+          <h3 className="text-lg font-medium text-gray-900">Recent Activity</h3>
+        </div>
+        <div className="p-4">
+          <div className="space-y-3">
+            {workflows.map((workflow) => (
+              <div key={`activity-${workflow.id}`} className="flex items-center justify-between py-2">
+                <div className="flex items-center">
+                  <div className={`w-3 h-3 rounded-full mr-3 ${
+                    workflow.status === 'completed' ? 'bg-green-500' :
+                    workflow.status === 'running' ? 'bg-blue-500' :
+                    workflow.status === 'failed' ? 'bg-red-500' : 'bg-gray-500'
+                  }`} />
+                  <span className="text-sm text-gray-900">{workflow.name}</span>
+                  <span className={`ml-2 text-xs font-medium ${getStatusColor(workflow.status)} px-2 py-1 rounded-full`}>
+                    {workflow.status}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-500">
+                  {workflow.endTime ? (
+                    <>Completed {new Date(workflow.endTime).toLocaleDateString()}</>
+                  ) : workflow.startTime ? (
+                    <>Started {new Date(workflow.startTime).toLocaleTimeString()}</>
+                  ) : (
+                    'Scheduled'
+                  )}
                 </div>
               </div>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-8 text-gray-500">
-            No workflows found. Start a new workflow to begin.
-          </div>
-        )}
+        </div>
       </Card>
-
-      {/* Workflow Visualization */}
-      {selectedWorkflow && workflowStatus && (
-        <Card
-          title={`Workflow: ${selectedWorkflow}`}
-          subtitle={`Status: ${workflowStatus.status} • Current Stage: ${workflowStatus.current_stage}`}
-        >
-          {statusLoading ? (
-            <div className="flex justify-center py-8">
-              <LoadingSpinner />
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {/* Workflow Progress */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">Progress</span>
-                  <span className="text-sm text-gray-500">
-                    {workflowStatus.stages_completed.length}/{Object.keys(WORKFLOW_STAGES).length} stages
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                    style={{
-                      width: `${(workflowStatus.stages_completed.length / Object.keys(WORKFLOW_STAGES).length) * 100}%`
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Stage Visualization */}
-              {renderWorkflowVisualization(workflowStatus)}
-
-              {/* Errors */}
-              {workflowStatus.errors.length > 0 && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <h4 className="text-sm font-medium text-red-800 mb-2">Errors</h4>
-                  <ul className="space-y-1">
-                    {workflowStatus.errors.map((error, index) => (
-                      <li key={index} className="text-sm text-red-700">
-                        {error}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Workflow Metadata */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
-                <div>
-                  <p className="text-xs text-gray-500">Started At</p>
-                  <p className="text-sm font-medium">
-                    {new Date(workflowStatus.started_at).toLocaleString()}
-                  </p>
-                </div>
-                {workflowStatus.completed_at && (
-                  <div>
-                    <p className="text-xs text-gray-500">Completed At</p>
-                    <p className="text-sm font-medium">
-                      {new Date(workflowStatus.completed_at).toLocaleString()}
-                    </p>
-                  </div>
-                )}
-                {workflowStatus.duration && (
-                  <div>
-                    <p className="text-xs text-gray-500">Duration</p>
-                    <p className="text-sm font-medium">
-                      {Math.round(workflowStatus.duration)}s
-                    </p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-xs text-gray-500">Stages Completed</p>
-                  <p className="text-sm font-medium">
-                    {workflowStatus.stages_completed.length}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </Card>
-      )}
     </div>
   )
 }

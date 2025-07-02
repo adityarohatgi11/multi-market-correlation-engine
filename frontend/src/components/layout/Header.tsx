@@ -9,13 +9,13 @@ import {
   SignalIcon,
 } from '@heroicons/react/24/outline'
 import { useQuery } from '@tanstack/react-query'
-import apiClient from '@/api/client'
+import apiClient from '../../api/client'
 
 interface HeaderProps {
-  onMenuClick: () => void
+  onMenuToggle: () => void
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [showNotifications, setShowNotifications] = useState(false)
 
@@ -39,175 +39,105 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const llmAvailable = llmStatus?.model_available
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
-      <div className="flex items-center justify-between">
-        {/* Left side */}
-        <div className="flex items-center space-x-4">
-          {/* Mobile menu button */}
-          <button
-            onClick={onMenuClick}
-            className="lg:hidden p-2 rounded-lg text-gray-400 hover:text-gray-500 hover:bg-gray-100"
-          >
-            <Bars3Icon className="h-6 w-6" />
-          </button>
-
-          {/* Page title and breadcrumb */}
-          <div className="hidden lg:block">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Multi-Market Correlation Engine
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Advanced Financial Analysis with AI-Powered Insights
-            </p>
-          </div>
-        </div>
-
-        {/* Center - Search bar */}
-        <div className="flex-1 max-w-lg mx-4">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search symbols, patterns, or insights..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-sm"
-            />
-          </div>
-        </div>
-
-        {/* Right side */}
-        <div className="flex items-center space-x-4">
-          {/* Status indicators */}
-          <div className="hidden md:flex items-center space-x-3">
-            {/* API Status */}
-            <motion.div
-              className="flex items-center space-x-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-            >
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  isOnline ? 'bg-green-400' : 'bg-red-400'
-                }`}
-              />
-              <span className="text-sm text-gray-600">
-                API {isOnline ? 'Online' : 'Offline'}
-              </span>
-            </motion.div>
-
-            {/* LLM Status */}
-            <motion.div
-              className="flex items-center space-x-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              <CpuChipIcon
-                className={`w-4 h-4 ${
-                  llmAvailable ? 'text-green-500' : 'text-orange-500'
-                }`}
-              />
-              <span className="text-sm text-gray-600">
-                LLM {llmAvailable ? 'Ready' : 'Loading'}
-              </span>
-            </motion.div>
-
-            {/* Vector DB Status */}
-            <motion.div
-              className="flex items-center space-x-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <SignalIcon className="w-4 h-4 text-blue-500" />
-              <span className="text-sm text-gray-600">
-                FAISS {llmStatus?.vector_patterns || 0} patterns
-              </span>
-            </motion.div>
-          </div>
-
-          {/* Notifications */}
-          <div className="relative">
+    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Left section - Menu toggle and title */}
+          <div className="flex items-center">
             <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-500 hover:bg-gray-100 relative"
+              type="button"
+              className="lg:hidden -ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+              onClick={onMenuToggle}
             >
-              <BellIcon className="h-6 w-6" />
-              <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-400 ring-2 ring-white" />
+              <span className="sr-only">Open sidebar</span>
+              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
-
-            {/* Notifications dropdown */}
-            {showNotifications && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-              >
-                <div className="px-4 py-2 border-b border-gray-200">
-                  <h3 className="text-sm font-medium text-gray-900">Notifications</h3>
-                </div>
-                <div className="max-h-64 overflow-y-auto">
-                  <div className="px-4 py-3 hover:bg-gray-50">
-                    <p className="text-sm text-gray-900">
-                      New market correlation pattern detected
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">2 minutes ago</p>
-                  </div>
-                  <div className="px-4 py-3 hover:bg-gray-50">
-                    <p className="text-sm text-gray-900">
-                      Portfolio rebalancing recommendation available
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">15 minutes ago</p>
-                  </div>
-                  <div className="px-4 py-3 hover:bg-gray-50">
-                    <p className="text-sm text-gray-900">
-                      Vector database updated with new patterns
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">1 hour ago</p>
-                  </div>
-                </div>
-                <div className="px-4 py-2 border-t border-gray-200">
-                  <button className="text-sm text-primary-600 hover:text-primary-700">
-                    View all notifications
-                  </button>
-                </div>
-              </motion.div>
-            )}
+            
+            {/* Desktop menu toggle */}
+            <button
+              type="button"
+              className="hidden lg:flex -ml-0.5 -mt-0.5 h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 mr-4"
+              onClick={onMenuToggle}
+            >
+              <span className="sr-only">Toggle sidebar</span>
+              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            </button>
+            
+            <div className="hidden lg:block">
+              <h1 className="text-xl font-semibold text-gray-900">
+                Multi-Market Correlation Engine
+              </h1>
+              <p className="text-sm text-gray-500">AI-Powered Insights</p>
+            </div>
           </div>
 
-          {/* User menu */}
-          <div className="relative">
-            <button className="flex items-center space-x-2 p-2 rounded-lg text-gray-700 hover:bg-gray-100">
-              <UserCircleIcon className="h-8 w-8" />
-              <div className="hidden md:block text-left">
-                <p className="text-sm font-medium">Admin User</p>
-                <p className="text-xs text-gray-500">admin@example.com</p>
+          {/* Center section - Search */}
+          <div className="flex-1 flex justify-center px-2 lg:ml-6 lg:justify-end">
+            <div className="max-w-lg w-full lg:max-w-xs">
+              <label htmlFor="search" className="sr-only">
+                Search
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                </div>
+                <input
+                  id="search"
+                  name="search"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  placeholder="Search symbols, patterns, or insights..."
+                  type="search"
+                />
               </div>
-            </button>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Mobile status bar */}
-      <div className="lg:hidden mt-4 flex items-center justify-between text-xs text-gray-500">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-1">
-            <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-400' : 'bg-red-400'}`} />
-            <span>API {isOnline ? 'Online' : 'Offline'}</span>
+          {/* Right section - Status indicators and user menu */}
+          <div className="flex items-center space-x-4">
+            {/* Status Indicators */}
+            <div className="hidden md:flex items-center space-x-4 text-sm">
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-red-400 rounded-full mr-2"></div>
+                <span className="text-gray-600">API Offline</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+                <span className="text-gray-600">LLM Loading</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                <span className="text-gray-600">FAISS 0 patterns</span>
+              </div>
+            </div>
+
+            {/* Notifications */}
+            <button
+              type="button"
+              className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            >
+              <span className="sr-only">View notifications</span>
+              <BellIcon className="h-6 w-6" aria-hidden="true" />
+              <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-400 ring-2 ring-white"></span>
+            </button>
+
+            {/* User menu */}
+            <div className="relative">
+              <button
+                type="button"
+                className="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                id="user-menu-button"
+              >
+                <span className="sr-only">Open user menu</span>
+                <UserCircleIcon className="h-8 w-8 text-gray-400" />
+              </button>
+            </div>
+            
+            {/* User info */}
+            <div className="hidden md:block">
+              <p className="text-sm font-medium text-gray-700">Admin User</p>
+              <p className="text-xs text-gray-500">admin@example.com</p>
+            </div>
           </div>
-          <div className="flex items-center space-x-1">
-            <CpuChipIcon className={`w-3 h-3 ${llmAvailable ? 'text-green-500' : 'text-orange-500'}`} />
-            <span>LLM {llmAvailable ? 'Ready' : 'Loading'}</span>
-          </div>
-        </div>
-        <div className="flex items-center space-x-1">
-          <SignalIcon className="w-3 h-3 text-blue-500" />
-          <span>FAISS {llmStatus?.vector_patterns || 0}</span>
         </div>
       </div>
     </header>

@@ -611,9 +611,9 @@ def get_vector_db() -> FAISSVectorDatabase:
     """
     global _vector_db
     if _vector_db is None:
-        _vector_db = FAISSVectorDatabase()
-        # Try to load existing index
-        _vector_db.load_index()
+        _vector_db = FAISSVectorDatabase(index_type="Flat")
+        # Try to load existing Flat index
+        _vector_db.load_index("data/vectors/faiss_index_flat")
     return _vector_db
 
 

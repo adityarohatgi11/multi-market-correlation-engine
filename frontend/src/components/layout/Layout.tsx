@@ -1,47 +1,40 @@
 import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import Sidebar from './Sidebar'
+import { Outlet } from 'react-router-dom'
 import Header from './Header'
-import type { BaseComponentProps } from '@/types'
+import Sidebar from './Sidebar'
+import type { BaseComponentProps } from '../../types'
 
 interface LayoutProps extends BaseComponentProps {
   children: React.ReactNode
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, className = '' }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen)
+  }
 
   return (
-    <div className={`flex h-screen bg-gray-50 ${className}`}>
+    <div className={`min-h-screen bg-gray-50 ${className}`}>
       {/* Sidebar */}
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
+      
       {/* Main content area */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className={`transition-all duration-300 ${sidebarOpen ? 'lg:pl-64' : 'lg:pl-0'}`}>
         {/* Header */}
-        <Header onMenuClick={() => setSidebarOpen(true)} />
-
+        <Header onMenuToggle={toggleSidebar} />
+        
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
-          <div className="mx-auto max-w-7xl">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.2 }}
-            >
-              {children}
-            </motion.div>
-          </div>
+        <main className="flex-1 p-6">
+          {children}
         </main>
       </div>
-
+      
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
+        <div 
+          className="fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity lg:hidden z-40"
           onClick={() => setSidebarOpen(false)}
         />
       )}

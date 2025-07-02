@@ -319,98 +319,111 @@ async def analyze_regime_change(request: RegimeAnalysisRequest):
 
 
 @router.post("/chat")
-async def chat_query(request: ChatQueryRequest):
+async def chat_query_flexible(data: Dict[str, Any] = Body(...)):
     """
-    Process natural language queries about financial data.
+    Process natural language queries about financial data (flexible endpoint).
     
     Args:
-        request: Chat query request
+        data: Chat query data (flexible format)
         
     Returns:
         AI response to user query
     """
     try:
-        logger.info(f"Processing chat query: {request.query[:50]}...")
+        query = data.get('message') or data.get('query', 'Hello')
+        user_id = data.get('user_id', 'default')
         
-        # Create task for LLM agent
-        task_data = {
-            'type': 'chat_query',
-            'query': request.query,
-            'user_id': request.user_id,
-            'include_context': request.include_context
+        logger.info(f"Processing chat query: {query[:50]}...")
+        
+        # Mock response for now
+        response = {
+            "response": f"Thank you for your query: '{query}'. I'm currently in demo mode. "
+                       f"This is a mock response showing the chat interface is working. "
+                       f"To enable full AI capabilities, please ensure the Llama model is properly loaded.",
+            "user_id": user_id,
+            "timestamp": datetime.now().isoformat(),
+            "model_status": "demo_mode",
+            "context": "demo"
         }
-        
-        task = Task(
-            id=f"chat_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
-            name="chat_query",
-            priority=TaskPriority.LOW,
-            created_at=datetime.now(),
-            scheduled_at=None,
-            data=task_data
-        )
-        
-        result = llm_agent._handle_task(task)
-        
-        if 'error' in result:
-            raise HTTPException(status_code=400, detail=result['error'])
         
         return {
             "status": "success",
-            "data": result,
-            "message": "Chat query processed"
+            "data": response,
+            "message": "Chat query processed (demo mode)"
         }
         
     except Exception as e:
         logger.error(f"Chat query failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        return {
+            "status": "error", 
+            "data": {"response": "Sorry, I encountered an error processing your request."},
+            "message": str(e)
+        }
 
 
 @router.post("/vector/search")
-async def vector_search(request: VectorSearchRequest):
+async def vector_search_flexible(data: Dict[str, Any] = Body(...)):
     """
-    Perform similarity search in vector database.
+    Perform similarity search in vector database (flexible endpoint).
     
     Args:
-        request: Vector search request
+        data: Vector search data (flexible format)
         
     Returns:
         Similar patterns from vector database
     """
     try:
-        logger.info(f"Performing vector search: {request.query_type}")
+        query = data.get('query_data', data.get('query', 'tech stocks'))
+        query_type = data.get('query_type', 'text')
+        k = data.get('k', 5)
         
-        # Create task for LLM agent
-        task_data = {
-            'type': 'similarity_search',
-            'query_type': request.query_type,
-            'query_data': request.query_data,
-            'k': request.k,
-            'filters': request.filters
-        }
+        logger.info(f"Performing vector search: {query_type} for '{query}'")
         
-        task = Task(
-            id=f"vector_search_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
-            name="similarity_search",
-            priority=TaskPriority.LOW,
-            created_at=datetime.now(),
-            scheduled_at=None,
-            data=task_data
-        )
+        # Use actual vector database for search
+        if query_type == 'text' or not query_type:
+            # Text-based search using sentence embeddings
+            results = vector_db.search_by_text_query(query, k=k)
+        elif query_type == 'symbol_pattern':
+            # Symbol pattern search (if price data is provided)
+            symbol = data.get('symbol', 'AAPL')
+            # For now, fallback to text search
+            results = vector_db.search_by_text_query(f"{symbol} {query}", k=k)
+        else:
+            # Default to text search
+            results = vector_db.search_by_text_query(query, k=k)
         
-        result = llm_agent._handle_task(task)
-        
-        if 'error' in result:
-            raise HTTPException(status_code=400, detail=result['error'])
+        # Format results for API response
+        formatted_results = []
+        for result in results:
+            formatted_results.append({
+                "pattern_id": result.get('pattern_id', ''),
+                "symbol": result.get('symbol', ''),
+                "similarity_score": result.get('similarity_score', 0.0),
+                "pattern_type": result.get('pattern_type', ''),
+                "description": f"Pattern: {result.get('pattern_id', '')} for {result.get('symbol', '')}",
+                "metadata": result.get('metadata', {}),
+                "timestamp": result.get('timestamp', ''),
+                "distance": result.get('distance', 0.0)
+            })
         
         return {
             "status": "success",
-            "data": result,
-            "message": f"Found {result.get('count', 0)} similar patterns"
+            "data": {
+                "results": formatted_results,
+                "count": len(formatted_results),
+                "query": query,
+                "query_type": query_type
+            },
+            "message": f"Found {len(formatted_results)} similar patterns in vector database"
         }
         
     except Exception as e:
         logger.error(f"Vector search failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        return {
+            "status": "error",
+            "data": {"results": [], "count": 0},
+            "message": str(e)
+        }
 
 
 @router.post("/vector/store")
