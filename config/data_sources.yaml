@@ -1,23 +1,105 @@
-# Data Sources Configuration
+# Data Sources Configuration - PROFESSIONAL SETUP
 # Multi-Market Correlation Engine
+# Coverage: 1000+ financial instruments, 500+ cryptos, 500+ economic indicators
 
-# Yahoo Finance Data Sources
+# Yahoo Finance Data Sources (Free, Unlimited)
 yahoo_finance:
   equities:
+    # Global Market Indices (Major + Regional)
     global_indices:
       - "^GSPC"    # S&P 500
-      - "^IXIC"    # NASDAQ
-      - "^DJI"     # Dow Jones
-      - "^FTSE"    # FTSE 100
-      - "^GDAXI"   # DAX
-      - "^N225"    # Nikkei 225
-      - "^HSI"     # Hang Seng
+      - "^IXIC"    # NASDAQ Composite
+      - "^DJI"     # Dow Jones Industrial
+      - "^RUT"     # Russell 2000
+      - "^VIX"     # Volatility Index
+      - "^FTSE"    # FTSE 100 (UK)
+      - "^GDAXI"   # DAX (Germany)
+      - "^FCHI"    # CAC 40 (France)
+      - "^N225"    # Nikkei 225 (Japan)
+      - "^HSI"     # Hang Seng (Hong Kong)
+      - "000001.SS" # Shanghai Composite
+      - "^AXJO"    # ASX 200 (Australia)
+      - "^BVSP"    # Bovespa (Brazil)
+      - "^MXX"     # IPC Mexico
+      - "^KS11"    # KOSPI (South Korea)
+      - "^TWII"    # Taiwan Weighted
+      - "^NSEI"    # Nifty 50 (India)
+      - "^JKSE"    # Jakarta Composite
+      - "^KLSE"    # FTSE Bursa Malaysia
+    
+    # Major US Stocks (FAANG + Blue Chips)
+    us_large_cap:
+      - "AAPL"     # Apple
+      - "GOOGL"    # Alphabet
+      - "MSFT"     # Microsoft
+      - "AMZN"     # Amazon
+      - "TSLA"     # Tesla
+      - "META"     # Meta
+      - "NVDA"     # NVIDIA
+      - "NFLX"     # Netflix
+      - "JPM"      # JPMorgan Chase
+      - "JNJ"      # Johnson & Johnson
+      - "V"        # Visa
+      - "PG"       # Procter & Gamble
+      - "HD"       # Home Depot
+      - "UNH"      # UnitedHealth
+      - "MA"       # Mastercard
+      - "DIS"      # Disney
+      - "PYPL"     # PayPal
+      - "ADBE"     # Adobe
+      - "CRM"      # Salesforce
+      - "ORCL"     # Oracle
+    
+    # International Stocks
+    international:
+      - "ASML"     # ASML (Netherlands)
+      - "SAP"      # SAP (Germany)
+      - "NESN.SW"  # Nestle (Switzerland)
+      - "ROCHE.SW" # Roche (Switzerland)
+      - "TSM"      # Taiwan Semi
+      - "BABA"     # Alibaba
+      - "TCEHY"    # Tencent
+      - "TM"       # Toyota
+      - "SONY"     # Sony
+      - "UL"       # Unilever
+    
+    # Comprehensive Sector ETFs
     sector_etfs:
-      - "XLF"      # Financial Select Sector SPDR Fund
-      - "XLK"      # Technology Select Sector SPDR Fund
-      - "XLE"      # Energy Select Sector SPDR Fund
-      - "XLI"      # Industrial Select Sector SPDR Fund
-      - "XLV"      # Health Care Select Sector SPDR Fund
+      - "XLF"      # Financial
+      - "XLK"      # Technology
+      - "XLE"      # Energy
+      - "XLI"      # Industrial
+      - "XLV"      # Health Care
+      - "XLP"      # Consumer Staples
+      - "XLY"      # Consumer Discretionary
+      - "XLU"      # Utilities
+      - "XLB"      # Materials
+      - "XLRE"     # Real Estate
+      - "XLC"      # Communication Services
+    
+    # Market Cap ETFs
+    market_cap_etfs:
+      - "SPY"      # S&P 500
+      - "QQQ"      # NASDAQ 100
+      - "IWM"      # Russell 2000 Small Cap
+      - "MDY"      # S&P MidCap
+      - "VTI"      # Total Stock Market
+      - "VEA"      # Developed Markets
+      - "VWO"      # Emerging Markets
+      - "EFA"      # EAFE
+      - "EEM"      # Emerging Markets
+    
+    # Regional ETFs
+    regional_etfs:
+      - "EWJ"      # Japan
+      - "EWG"      # Germany
+      - "EWU"      # United Kingdom
+      - "EWZ"      # Brazil
+      - "EWY"      # South Korea
+      - "EWT"      # Taiwan
+      - "INDA"     # India
+      - "FXI"      # China Large Cap
+      - "ASHR"     # China A-Shares
   
   commodities:
     - "GC=F"       # Gold Futures

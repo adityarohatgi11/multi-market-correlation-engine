@@ -1,0 +1,304 @@
+"""
+Configuration Management System
+==============================
+
+Centralized configuration management for the Multi-Market Correlation Engine.
+Handles loading from YAML files, environment variables, and provides
+validation and default values.
+
+Author: Multi-Market Correlation Engine Team
+Version: 0.1.0
+"""
+
+import os
+import yaml
+import logging
+from pathlib import Path
+from typing import Dict, Any, Optional
+from dataclasses import dataclass, field
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class DataSourceConfig:
+    """Configuration for data sources."""
+    yahoo_finance: Dict[str, Any] = field(default_factory=dict)
+    crypto: Dict[str, Any] = field(default_factory=dict)
+    fred: Dict[str, Any] = field(default_factory=dict)
+    collection: Dict[str, Any] = field(default_factory=dict)
+    rate_limits: Dict[str, Any] = field(default_factory=dict)
+    storage: Dict[str, Any] = field(default_factory=dict)
+    error_handling: Dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class DatabaseConfig:
+    """Configuration for database connections."""
+    url: str = "sqlite:///data/market_data.db"
+    echo: bool = False
+    pool_size: int = 5
+    max_overflow: int = 10
+
+
+@dataclass
+class LoggingConfig:
+    """Configuration for logging."""
+    level: str = "INFO"
+    file: str = "logs/correlation_engine.log"
+    format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    max_file_size: int = 10485760 # 10MB
+    backup_count: int = 5
+
+
+@dataclass
+class AppConfig:
+    """Main application configuration."""
+    debug: bool = False
+    streamlit_port: int = 8501
+    api_timeout: int = 30
+    max_retries: int = 3
+    data_sources: DataSourceConfig = field(default_factory=DataSourceConfig)
+    database: DatabaseConfig = field(default_factory=DatabaseConfig)
+    logging: LoggingConfig = field(default_factory=LoggingConfig)
+
+
+class ConfigManager:
+"""
+Central configuration manager for the application.
+
+Loads configuration from multiple sources in order of precedence:
+1. Environment variables (highest priority)
+2. YAML configuration files
+3. Default values (lowest priority)
+"""
+
+def __init__(self, config_dir: str = "config"):
+"""
+Initialize configuration manager.
+
+Args:
+config_dir: Directory containing configuration files
+"""
+self.config_dir = Path(config_dir)
+self.config = AppConfig()
+self._load_configuration()
+
+def _load_configuration(self) -> None:
+"""Load configuration from all sources."""
+try:
+# Load YAML configuration
+self._load_yaml_config()
+
+# Override with environment variables
+self._load_env_config()
+
+# Validate configuration
+self._validate_config()
+
+logger.info("Configuration loaded successfully")
+
+except Exception as e:
+logger.error(f"Failed to load configuration: {e}")
+raise ConfigurationError(f"Configuration loading failed: {e}")
+
+def _load_yaml_config(self) -> None:
+"""Load configuration from YAML files."""
+data_sources_file = self.config_dir / "data_sources.yaml"
+
+if data_sources_file.exists():
+try:
+with open(data_sources_file, 'r') as f:
+data_sources_config = yaml.safe_load(f)
+
+# Update data sources configuration
+self.config.data_sources = DataSourceConfig(**data_sources_config)
+logger.info(f"Loaded data sources config from {data_sources_file}")
+
+except yaml.YAMLError as e:
+logger.error(f"Failed to parse YAML file {data_sources_file}: {e}")
+raise ConfigurationError(f"Invalid YAML configuration: {e}")
+except Exception as e:
+logger.error(f"Failed to load {data_sources_file}: {e}")
+raise ConfigurationError(f"Configuration file error: {e}")
+else:
+logger.warning(f"Data sources config file not found: {data_sources_file}")
+
+def _load_env_config(self) -> None:
+"""Load configuration from environment variables."""
+# Database configuration
+self.config.database.url = os.getenv(
+"DATABASE_URL",
+self.config.database.url
+)
+
+# Logging configuration
+self.config.logging.level = os.getenv(
+"LOG_LEVEL",
+self.config.logging.level
+)
+self.config.logging.file = os.getenv(
+"LOG_FILE",
+self.config.logging.file
+)
+
+# Application configuration
+self.config.debug = os.getenv("DEBUG_MODE", "False").lower() == "true"
+self.config.streamlit_port = int(os.getenv("STREAMLIT_PORT", "8501"))
+
+# API Keys (sensitive data)
+self.fred_api_key = os.getenv("FRED_API_KEY")
+self.alpha_vantage_key = os.getenv("ALPHA_VANTAGE_KEY")
+self.news_api_key = os.getenv("NEWS_API_KEY")
+
+logger.info("Environment variables loaded")
+
+def _validate_config(self) -> None:
+"""Validate configuration values."""
+# Validate port number
+if not (1024 <= self.config.streamlit_port <= 65535):
+raise ConfigurationError(f"Invalid port number: {self.config.streamlit_port}")
+
+# Validate logging level
+valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+if self.config.logging.level.upper() not in valid_levels:
+raise ConfigurationError(f"Invalid log level: {self.config.logging.level}")
+
+# Validate required API keys (warn if missing)
+if not self.fred_api_key:
+logger.warning("FRED_API_KEY not found in environment variables")
+
+# Validate file paths
+self._ensure_directories()
+
+def _ensure_directories(self) -> None:
+"""Ensure required directories exist."""
+# Create logs directory
+log_file_path = Path(self.config.logging.file)
+log_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+# Create data directories
+data_dirs = ["data/raw", "data/processed", "data/models"]
+for dir_path in data_dirs:
+Path(dir_path).mkdir(parents=True, exist_ok=True)
+
+def get_data_source_config(self, source: str) -> Dict[str, Any]:
+"""
+Get configuration for a specific data source.
+
+Args:
+source: Name of the data source
+
+Returns:
+Configuration dictionary for the source
+"""
+config_map = {
+"yahoo_finance": self.config.data_sources.yahoo_finance,
+"crypto": self.config.data_sources.crypto,
+"fred": self.config.data_sources.fred,
+"collection": self.config.data_sources.collection,
+"rate_limits": self.config.data_sources.rate_limits,
+"storage": self.config.data_sources.storage,
+"error_handling": self.config.data_sources.error_handling,
+}
+
+if source not in config_map:
+raise ConfigurationError(f"Unknown data source: {source}")
+
+return config_map[source]
+
+def get_api_key(self, service: str) -> Optional[str]:
+"""
+Get API key for a service.
+
+Args:
+service: Name of the service
+
+Returns:
+API key if found, None otherwise
+"""
+key_map = {
+"fred": self.fred_api_key,
+"alpha_vantage": self.alpha_vantage_key,
+"news": self.news_api_key,
+}
+
+return key_map.get(service)
+
+def get_database_url(self) -> str:
+"""Get database connection URL."""
+return self.config.database.url
+
+def is_debug_mode(self) -> bool:
+"""Check if debug mode is enabled."""
+return self.config.debug
+
+def get_logging_config(self) -> Dict[str, Any]:
+"""Get logging configuration."""
+return {
+"level": self.config.logging.level,
+"filename": self.config.logging.file,
+"format": self.config.logging.format,
+"maxBytes": self.config.logging.max_file_size,
+"backupCount": self.config.logging.backup_count,
+}
+
+
+class ConfigurationError(Exception):
+"""Raised when configuration loading or validation fails."""
+pass
+
+
+# Global configuration instance
+_config_manager = None
+
+
+def get_config() -> ConfigManager:
+"""
+Get the global configuration manager instance.
+
+Returns:
+ConfigManager instance
+"""
+global _config_manager
+if _config_manager is None:
+_config_manager = ConfigManager()
+return _config_manager
+
+
+def reload_config() -> ConfigManager:
+"""
+Reload configuration from files.
+
+Returns:
+New ConfigManager instance
+"""
+global _config_manager
+_config_manager = ConfigManager()
+return _config_manager
+
+
+# Example usage and testing
+if __name__ == "__main__":
+# Test configuration loading
+try:
+config = get_config()
+print(" Configuration loaded successfully!")
+print(f"Database URL: {config.get_database_url()}")
+print(f"Debug mode: {config.is_debug_mode()}")
+print(f"FRED API key configured: {'Yes' if config.get_api_key('fred') else 'No'}")
+
+# Test data source configuration
+yahoo_config = config.get_data_source_config("yahoo_finance")
+print(f"Yahoo Finance assets configured: {len(yahoo_config.get('equities', {}).get('global_indices', []))}")
+
+except ConfigurationError as e:
+print(f" Configuration error: {e}")
+except Exception as e:
+print(f" Unexpected error: {e}")
